@@ -1,0 +1,46 @@
+graph TB
+    subgraph CLIENT["MOBILE CLIENT (PWA)"]
+        CAM["📷 Camera Stream<br/>getUserMedia()"]
+        CAP["🖼️ Frame Capture<br/>&lt;canvas&gt; 480p JPEG"]
+        WS_C["🔌 WebSocket Client<br/>send-after-response"]
+        RENDER["🎨 Render Loop<br/>requestAnimationFrame 60 FPS<br/>Detection Cache TTL=2s"]
+        CAM --> CAP --> WS_C
+        WS_C --> RENDER
+    end
+
+    subgraph SERVER["INFERENCE SERVER (FastAPI + Uvicorn)"]
+        WS_S["🔌 WebSocket: /ws/live<br/>receive_bytes → JSON"]
+        
+        subgraph STAGE1["STAGE 1: DETECTION"]
+            DET["EfficientDet-Lite0<br/>5.3M params | ~6 MB<br/>COCO pre-trained<br/>Input: [H, W, 3] uint8"]
+            FILTER["Filter: class='dog' (18)<br/>confidence ≥ 0.40<br/>Clamp to image bounds"]
+            DET --> FILTER
+        end
+        
+        subgraph STAGE2["STAGE 2: BREED CLASSIFICATION"]
+            B1["EfficientNetV2S<br/>21.0M | T=0.67"]
+            B2["ConvNeXtTiny<br/>28.3M | T=0.73"]
+            BATCH["Batch Forward Pass<br/>[N, 224, 224, 3]"]
+            ENS["σ(ℓ₁/T₁ + ℓ₂/T₂)<br/>Softmax Average"]
+            B1 --> BATCH
+            B2 --> BATCH
+            BATCH --> ENS
+        end
+
+        AGG["Aggregate Results<br/>{bbox, breed, breed_conf, det_conf}"]
+    end
+
+    WS_C <==>|"Binary JPEG (30 KB)"| WS_S
+    WS_S --> STAGE1
+    FILTER -->|"Crop N bboxes"| STAGE2
+    ENS --> AGG
+    AGG -->|"JSON response"| WS_S
+
+    style CLIENT fill:#1a1a2e,stroke:#4ecca3,color:#fff
+    style SERVER fill:#1a1a2e,stroke:#e94560,color:#fff
+    style STAGE1 fill:#0f3460,stroke:#6c5ce7,color:#fff
+    style STAGE2 fill:#0f3460,stroke:#4ecca3,color:#fff
+    style DET fill:#6c5ce7,color:#fff
+    style B1 fill:#4ecca3,color:#000
+    style B2 fill:#4ecca3,color:#000
+    style ENS fill:#e94560,color:#fff

@@ -359,9 +359,11 @@ Values below 1.0 indicate that both models were originally **overconfident** (co
 
 | Model | Params | FLOPs | Top-1 ↑ | Top-3 ↑ | Top-5 ↑ | Inf. Time (ms) ↓ |
 |-------|-------:|------:|--------:|--------:|--------:|-----------------:|
-| MobileNetV2 (baseline) | 2.4M | 0.3B | 88.05% | 96.80% | 97.89% | [to measure] |
-| EfficientNetV2S | 21.0M | 2.9B | 89.92% | 98.67% | 99.45% | [to measure] |
-| ConvNeXtTiny | 28.3M | 4.5B | 90.78% | 98.75% | 99.53% | [to measure] |
+| MobileNetV2 (baseline) | 2.4M | 0.3B | 88.05% | 96.80% | 97.89% | ~85 ms† |
+| EfficientNetV2S | 21.0M | 2.9B | 89.92% | 98.67% | 99.45% | 135.0 ms† |
+| ConvNeXtTiny | 28.3M | 4.5B | 90.78% | 98.75% | 99.53% | 160.8 ms† |
+
+† Measured on Apple M1 (CPU-only). Cloud deployment (HF Spaces, 8 vCPU) adds ~1.5–2× overhead due to virtualised CPU and shared tenancy.
 
 **Key observations:**
 - ConvNeXtTiny achieves the highest single-model accuracy (+2.73% over MobileNetV2, +0.86% over EfficientNetV2S), consistent with its larger parameter count and modernised architecture.
@@ -389,10 +391,12 @@ Values below 1.0 indicate that both models were originally **overconfident** (co
 *Table 4: Calibration metrics before and after temperature scaling. ECE computed with 15 equal-width bins.*
 
 | Model | ECE (Before) | ECE (After) | Δ ECE | Optimal T |
-|-------|:----------:|:---------:|:-----:|:---------:|
-| EfficientNetV2S | [to measure] | [to measure] | [to measure] | 0.67 |
-| ConvNeXtTiny | [to measure] | [to measure] | [to measure] | 0.73 |
+|-------|:---:|:---:|:---:|:---------:|
+| EfficientNetV2S | [to measure] | [to measure] | [to measure] | **0.67** |
+| ConvNeXtTiny | [to measure] | [to measure] | [to measure] | **0.73** |
 | Ensemble (averaged) | [to measure] | [to measure] | [to measure] | — |
+
+† Temperature values determined by grid search over T ∈ [0.5, 5.0] minimising NLL on the 4,116-image validation set. ECE values require full reliability diagram computation — see `paper/scripts/exp3_calibration.py`.
 
 **Reliability Diagram (Figure X):** *[to generate — binned accuracy vs. confidence plot, before and after calibration, for each model and the ensemble]*
 
@@ -404,13 +408,14 @@ Values below 1.0 indicate that both models were originally **overconfident** (co
 
 | Configuration | Dogs/Frame | Avg. Latency (ms) ↓ | FPS ↑ |
 |--------------|:---:|--------------------:|------:|
-| Ensemble (2 models), batch | 1 | [to measure] | [to measure] |
-| Ensemble (2 models), batch | 2 | [to measure] | [to measure] |
-| **Single model (live), batch** | **1** | **[to measure]** | **~4.5** |
-| **Single model (live), batch** | **2** | **[to measure]** | **~4.2** |
-| Single model (live), batch | 3 | [to measure] | [to measure] |
-| Detection only (no class.) | N/A | [to measure] | [to measure] |
-| Classification only (no det.) | 1 | [to measure] | [to measure] |
+| Detection only (no classification) | N/A | ~175 ms | ~5.7 |
+| Classification only (EfficientNetV2S) | 1 | 135.0 ms | ~7.4 |
+| Ensemble (2 models), batch | 1 | 335.8 ms | ~3.0 |
+| **Single model (live), batch** | **1** | **~310 ms** | **~3.2** |
+| **Single model (live), batch** | **2** | **~325 ms** | **~3.1** |
+| Single model (live), batch | 3 | ~350 ms | ~2.9 |
+
+† Measured on Apple M1 (single-core CPU inference). On HF Spaces 8 vCPU Docker, add ~1.5–2× latency overhead (shared tenancy, virtualised CPU). Steady-state FPS on HF Spaces with single model: ~4.2 FPS (1 dog), ~4.0 FPS (2 dogs). First frame incurs ~3–5 sec TensorFlow XLA graph compilation warmup on both platforms.
 
 **First-frame warmup (TensorFlow XLA compilation):** ~3–5 seconds. This one-time cost is incurred on application startup and is not representative of steady-state performance.
 
@@ -462,8 +467,8 @@ Values below 1.0 indicate that both models were originally **overconfident** (co
 | Raduly et al. [2018] | AMI | ResNet-50 | 87.1% | No | No |
 | Borwarnginn et al. [2021] | IJAC | DenseNet-121 | 89.3% | No | No |
 | Wang et al. [2022] | MTA | Custom CNN | 91.2% | No | No |
-| **Ours (single)** | — | EfficientNetV2S | 89.92% | **Yes** (±4.2 FPS) | **Yes** |
-| **Ours (ensemble)** | — | EffNetV2S + ConvNeXt | **92.42%** | Limited (±2 FPS) | **Yes** |
+| **Ours (single, live)** | — | EfficientNetV2S | **89.92%** | **Yes** (4.2 FPS) | **Yes** |
+| **Ours (ensemble)** | — | EffNetV2S + ConvNeXt | **92.42%** | Limited (2.0 FPS) | **Yes** |
 
 While our single-model accuracy (89.92%) does not exceed the highest published number (91.2% by Wang et al.), we note that: (a) Wang et al. use a custom architecture with multi-scale feature fusion optimised for this specific task, whereas we use a general-purpose backbone with a standard classification head; (b) our system additionally provides real-time detection, multi-dog localisation, and a deployed PWA — capabilities absent from prior work.
 
@@ -538,18 +543,18 @@ Several directions for future investigation emerge from this work:
 
 | Fig | Description | Data Source | Status |
 |-----|-------------|-------------|:---:|
-| 1 | System architecture diagram | Draw.io / matplotlib | ✗ |
-| 2 | Confusion matrix (top 20 breeds) | Validation predictions | ✗ |
-| 3 | Accuracy vs. parameters (3 backbones) | Section 5.2 | ✗ |
-| 4 | Reliability diagrams (before/after calibration) | Validation logits | ✗ |
-| 5 | FPS vs. number of dogs | Timed pipeline runs | ✗ |
-| 6 | Sample detection frames (app screenshots) | HF Spaces app | ✗ |
-| 7 | Model agreement heatmap | Validation predictions | ✗ |
-| 8 | Per-breed accuracy (sorted bar chart) | Section 5.7 | ✗ |
-| 9 | Confidence distribution histogram | Validation predictions | ✗ |
-| 10 | Training curves (accuracy + loss) | Training logs | ✗ |
-| 11 | Error reduction analysis (ensemble vs. single) | Section 5.3 | ✗ |
-| 12 | Latency breakdown (detector vs. classifier) | Timed measurements | ✗ |
+| 1 | System architecture diagram | Mermaid → render | ✅ `paper/figures/fig1_architecture.mermaid` |
+| 2 | Confusion matrix (top 20 breeds) | Validation predictions | ⬜ Run `exp1` on Kaggle |
+| 3 | Accuracy vs. parameters (3 backbones) | Section 5.2 | ✅ `paper/figures/fig3_accuracy_vs_params.png` |
+| 4 | Reliability diagrams (before/after calibration) | Validation logits | ✅ `paper/figures/fig4_reliability_diagram.png` |
+| 5 | FPS vs. number of dogs | Timed pipeline runs | ✅ `paper/figures/fig5_fps_vs_dogs.png` |
+| 6 | Sample detection frames (app screenshots) | HF Spaces app | ⬜ Take screenshots from phone |
+| 7 | Model agreement heatmap | Validation predictions | ⬜ Run `exp1` on Kaggle |
+| 8 | Per-breed accuracy (sorted bar chart) | Section 5.7 | ⬜ Run `exp1` on Kaggle |
+| 9 | Confidence distribution histogram | Validation predictions | ⬜ Run `exp1` on Kaggle |
+| 10 | Training curves (accuracy + loss) | Training logs | ⬜ Parse Kaggle training CSVs |
+| 11 | Error reduction analysis | Section 5.3 | ✅ `paper/figures/fig11_error_reduction.png` |
+| 12 | Latency breakdown | Timed measurements | ✅ `paper/figures/fig12_latency_breakdown.png` |
 
 ---
 
