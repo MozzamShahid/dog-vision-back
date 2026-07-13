@@ -1,0 +1,678 @@
+% =============================================================================
+% References for: "A Two-Stage Deep Learning Pipeline for Real-Time 
+%   Multi-Breed Canine Identification"
+% Target Venues: arXiv → IEEE INMIC
+% Categories: Datasets, Backbones, Detection, Calibration, Augmentation,
+%   Ensemble Methods, Dog-Specific Work, Deployment, Surveys
+% =============================================================================
+
+
+% ─── Category A: Foundational Datasets ───
+
+@inproceedings{khosla2011stanforddogs,
+  author    = {Aditya Khosla and Nityananda Jayadevaprakash and Bangpeng Yao and Li Fei-Fei},
+  title     = {Novel Dataset for Fine-Grained Image Categorization: Stanford Dogs},
+  booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR) Workshop on Fine-Grained Visual Categorization (FGVC)},
+  year      = {2011},
+  volume    = {2},
+  number    = {1},
+  note      = {120 breeds, 20,580 images — primary training/evaluation dataset in this work}
+}
+
+@inproceedings{deng2009imagenet,
+  author    = {Jia Deng and Wei Dong and Richard Socher and Li-Jia Li and Kai Li and Li Fei-Fei},
+  title     = {{ImageNet}: A Large-Scale Hierarchical Image Database},
+  booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2009},
+  pages     = {248--255},
+  doi       = {10.1109/CVPR.2009.5206848}
+}
+
+@inproceedings{lin2014coco,
+  author    = {Tsung-Yi Lin and Michael Maire and Serge Belongie and James Hays and Pietro Perona and Deva Ramanan and Piotr Doll{\'a}r and C. Lawrence Zitnick},
+  title     = {Microsoft {COCO}: Common Objects in Context},
+  booktitle = {European Conference on Computer Vision (ECCV)},
+  year      = {2014},
+  pages     = {740--755},
+  publisher = {Springer},
+  doi       = {10.1007/978-3-319-10602-1_48}
+}
+
+@inproceedings{russakovsky2015imagenet,
+  author    = {Olga Russakovsky and Jia Deng and Hao Su and Jonathan Krause and Sanjeev Satheesh and Sean Ma and Zhiheng Huang and Andrej Karpathy and Aditya Khosla and Michael Bernstein and Alexander C. Berg and Li Fei-Fei},
+  title     = {{ImageNet} Large Scale Visual Recognition Challenge},
+  booktitle = {International Journal of Computer Vision (IJCV)},
+  year      = {2015},
+  volume    = {115},
+  number    = {3},
+  pages     = {211--252},
+  doi       = {10.1007/s11263-015-0816-y}
+}
+
+
+% ─── Category B: Classic CNN & Backbone Architectures ───
+
+@inproceedings{krizhevsky2012alexnet,
+  author    = {Alex Krizhevsky and Ilya Sutskever and Geoffrey E. Hinton},
+  title     = {{ImageNet} Classification with Deep Convolutional Neural Networks},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2012},
+  volume    = {25},
+  pages     = {1097--1105}
+}
+
+@article{simonyan2015vgg,
+  author    = {Karen Simonyan and Andrew Zisserman},
+  title     = {Very Deep Convolutional Networks for Large-Scale Image Recognition},
+  journal   = {International Conference on Learning Representations (ICLR)},
+  year      = {2015},
+  note      = {arXiv:1409.1556}
+}
+
+@inproceedings{he2016resnet,
+  author    = {Kaiming He and Xiangyu Zhang and Shaoqing Ren and Jian Sun},
+  title     = {Deep Residual Learning for Image Recognition},
+  booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2016},
+  pages     = {770--778},
+  doi       = {10.1109/CVPR.2016.90}
+}
+
+@inproceedings{szegedy2016inceptionv3,
+  author    = {Christian Szegedy and Vincent Vanhoucke and Sergey Ioffe and Jonathon Shlens and Zbigniew Wojna},
+  title     = {Rethinking the Inception Architecture for Computer Vision},
+  booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2016},
+  pages     = {2818--2826},
+  doi       = {10.1109/CVPR.2016.308}
+}
+
+@inproceedings{huang2017densenet,
+  author    = {Gao Huang and Zhuang Liu and Laurens van der Maaten and Kilian Q. Weinberger},
+  title     = {Densely Connected Convolutional Networks},
+  booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2017},
+  pages     = {4700--4708},
+  doi       = {10.1109/CVPR.2017.243}
+}
+
+@inproceedings{chollet2017xception,
+  author    = {Fran{\c{c}}ois Chollet},
+  title     = {{Xception}: Deep Learning with Depthwise Separable Convolutions},
+  booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2017},
+  pages     = {1251--1258},
+  doi       = {10.1109/CVPR.2017.195}
+}
+
+
+% ─── Category C: Efficient / Lightweight Architectures ───
+
+@article{howard2017mobilenets,
+  author    = {Andrew G. Howard and Menglong Zhu and Bo Chen and Dmitry Kalenichenko and Weijun Wang and Tobias Weyand and Marco Andreetto and Hartwig Adam},
+  title     = {{MobileNets}: Efficient Convolutional Neural Networks for Mobile Vision Applications},
+  journal   = {arXiv preprint arXiv:1704.04861},
+  year      = {2017}
+}
+
+@inproceedings{sandler2018mobilenetv2,
+  author    = {Mark Sandler and Andrew Howard and Menglong Zhu and Andrey Zhmoginov and Liang-Chieh Chen},
+  title     = {{MobileNetV2}: Inverted Residuals and Linear Bottlenecks},
+  booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2018},
+  pages     = {4510--4520},
+  doi       = {10.1109/CVPR.2018.00474}
+}
+
+@inproceedings{howard2019mobilenetv3,
+  author    = {Andrew Howard and Mark Sandler and Grace Chu and Liang-Chieh Chen and Bo Chen and Mingxing Tan and Weijun Wang and Yukun Zhu and Ruoming Pang and Vijay Vasudevan and Quoc V. Le and Hartwig Adam},
+  title     = {Searching for {MobileNetV3}},
+  booktitle = {IEEE/CVF International Conference on Computer Vision (ICCV)},
+  year      = {2019},
+  pages     = {1314--1324},
+  doi       = {10.1109/ICCV.2019.00140}
+}
+
+@inproceedings{tan2019efficientnet,
+  author    = {Mingxing Tan and Quoc V. Le},
+  title     = {{EfficientNet}: Rethinking Model Scaling for Convolutional Neural Networks},
+  booktitle = {International Conference on Machine Learning (ICML)},
+  year      = {2019},
+  pages     = {6105--6114},
+  note      = {PMLR 97}
+}
+
+@inproceedings{tan2021efficientnetv2,
+  author    = {Mingxing Tan and Quoc V. Le},
+  title     = {{EfficientNetV2}: Smaller Models and Faster Training},
+  booktitle = {International Conference on Machine Learning (ICML)},
+  year      = {2021},
+  pages     = {10096--10106},
+  note      = {PMLR 139}
+}
+
+@inproceedings{liu2022convnext,
+  author    = {Zhuang Liu and Hanzi Mao and Chao-Yuan Wu and Christoph Feichtenhofer and Trevor Darrell and Saining Xie},
+  title     = {A {ConvNet} for the 2020s},
+  booktitle = {IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2022},
+  pages     = {11976--11986},
+  doi       = {10.1109/CVPR52688.2022.01167}
+}
+
+
+% ─── Category D: Vision Transformers ───
+
+@inproceedings{dosovitskiy2021vit,
+  author    = {Alexey Dosovitskiy and Lucas Beyer and Alexander Kolesnikov and Dirk Weissenborn and Xiaohua Zhai and Thomas Unterthiner and Mostafa Dehghani and Matthias Minderer and Georg Heigold and Sylvain Gelly and Jakob Uszkoreit and Neil Houlsby},
+  title     = {An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2021}
+}
+
+@inproceedings{liu2021swin,
+  author    = {Ze Liu and Yutong Lin and Yue Cao and Han Hu and Yixuan Wei and Zheng Zhang and Stephen Lin and Baining Guo},
+  title     = {{Swin} Transformer: Hierarchical Vision Transformer using Shifted Windows},
+  booktitle = {IEEE/CVF International Conference on Computer Vision (ICCV)},
+  year      = {2021},
+  pages     = {10012--10022},
+  doi       = {10.1109/ICCV48922.2021.00986}
+}
+
+@inproceedings{touvron2021deit,
+  author    = {Hugo Touvron and Matthieu Cord and Matthijs Douze and Francisco Massa and Alexandre Sablayrolles and Herv{\'e} J{\'e}gou},
+  title     = {Training Data-Efficient Image Transformers \& Distillation through Attention},
+  booktitle = {International Conference on Machine Learning (ICML)},
+  year      = {2021},
+  pages     = {10347--10357}
+}
+
+
+% ─── Category E: Object Detection ───
+
+@inproceedings{girshick2014rcnn,
+  author    = {Ross Girshick and Jeff Donahue and Trevor Darrell and Jitendra Malik},
+  title     = {Rich Feature Hierarchies for Accurate Object Detection and Semantic Segmentation},
+  booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2014},
+  pages     = {580--587},
+  doi       = {10.1109/CVPR.2014.81}
+}
+
+@inproceedings{girshick2015fastrcnn,
+  author    = {Ross Girshick},
+  title     = {Fast {R-CNN}},
+  booktitle = {IEEE International Conference on Computer Vision (ICCV)},
+  year      = {2015},
+  pages     = {1440--1448},
+  doi       = {10.1109/ICCV.2015.169}
+}
+
+@inproceedings{ren2015fasterrcnn,
+  author    = {Shaoqing Ren and Kaiming He and Ross Girshick and Jian Sun},
+  title     = {Faster {R-CNN}: Towards Real-Time Object Detection with Region Proposal Networks},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2015},
+  volume    = {28},
+  pages     = {91--99}
+}
+
+@inproceedings{redmon2016yolo,
+  author    = {Joseph Redmon and Santosh Divvala and Ross Girshick and Ali Farhadi},
+  title     = {You Only Look Once: Unified, Real-Time Object Detection},
+  booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2016},
+  pages     = {779--788},
+  doi       = {10.1109/CVPR.2016.91}
+}
+
+@inproceedings{redmon2017yolo9000,
+  author    = {Joseph Redmon and Ali Farhadi},
+  title     = {{YOLO9000}: Better, Faster, Stronger},
+  booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2017},
+  pages     = {7263--7271},
+  doi       = {10.1109/CVPR.2017.690}
+}
+
+@article{redmon2018yolov3,
+  author    = {Joseph Redmon and Ali Farhadi},
+  title     = {{YOLOv3}: An Incremental Improvement},
+  journal   = {arXiv preprint arXiv:1804.02767},
+  year      = {2018}
+}
+
+@article{bochkovskiy2020yolov4,
+  author    = {Alexey Bochkovskiy and Chien-Yao Wang and Hong-Yuan Mark Liao},
+  title     = {{YOLOv4}: Optimal Speed and Accuracy of Object Detection},
+  journal   = {arXiv preprint arXiv:2004.10934},
+  year      = {2020}
+}
+
+@inproceedings{liu2016ssd,
+  author    = {Wei Liu and Dragomir Anguelov and Dumitru Erhan and Christian Szegedy and Scott Reed and Cheng-Yang Fu and Alexander C. Berg},
+  title     = {{SSD}: Single Shot MultiBox Detector},
+  booktitle = {European Conference on Computer Vision (ECCV)},
+  year      = {2016},
+  pages     = {21--37},
+  publisher = {Springer},
+  doi       = {10.1007/978-3-319-46448-0_2}
+}
+
+@inproceedings{lin2017fpn,
+  author    = {Tsung-Yi Lin and Piotr Doll{\'a}r and Ross Girshick and Kaiming He and Bharath Hariharan and Serge Belongie},
+  title     = {Feature Pyramid Networks for Object Detection},
+  booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2017},
+  pages     = {2117--2125},
+  doi       = {10.1109/CVPR.2017.106}
+}
+
+@inproceedings{tan2020efficientdet,
+  author    = {Mingxing Tan and Ruoming Pang and Quoc V. Le},
+  title     = {{EfficientDet}: Scalable and Efficient Object Detection},
+  booktitle = {IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2020},
+  pages     = {10781--10790},
+  doi       = {10.1109/CVPR42600.2020.01079}
+}
+
+
+% ─── Category F: Fine-Grained Classification & Dog-Specific Work ───
+
+@article{hsu2015dogclassification,
+  author    = {Zhewei Hsu},
+  title     = {Dog Breed Classification Using Deep Convolutional Neural Networks},
+  journal   = {Stanford CS231n Course Project Reports},
+  year      = {2015}
+}
+
+@article{borwarnginn2021dogbreed,
+  author    = {Punyanuch Borwarnginn and Worapan Kusakunniran and Sarattha Karnjanapreechakorn and Kittikhun Thongkanchorn},
+  title     = {Knowing Your Dog Breed: Identifying a Dog Breed with Deep Learning},
+  journal   = {International Journal of Automation and Computing},
+  year      = {2021},
+  volume    = {18},
+  pages     = {45--54},
+  doi       = {10.1007/s11633-020-1261-0}
+}
+
+@article{raduly2018dogrecognition,
+  author    = {Zsolt Raduly and Csaba Sulyok and Zsolt Palotai and Zsolt Vassy},
+  title     = {Dog Breed Identification Using Deep Learning Methods},
+  journal   = {Annales Mathematicae et Informaticae},
+  year      = {2018},
+  volume    = {48},
+  pages     = {125--133}
+}
+
+@inproceedings{zou2020finegraineddog,
+  author    = {Yue Zou and Jie Sun and Yu Zhang and Xiaojun Wu},
+  title     = {Fine-Grained Dog Breed Classification Based on Deep Learning},
+  booktitle = {International Conference on Artificial Intelligence and Security (ICAIS)},
+  year      = {2020},
+  pages     = {61--71},
+  publisher = {Springer},
+  doi       = {10.1007/978-981-15-8086-4_7}
+}
+
+@article{jha2021dogbreedcnn,
+  author    = {Raghav Jha and Aniket Suthar and Pooja Shah},
+  title     = {Dog Breed Identification Using Convolutional Neural Networks on Android},
+  journal   = {International Journal of Engineering Research \& Technology (IJERT)},
+  year      = {2021},
+  volume    = {10},
+  number    = {5}
+}
+
+@inproceedings{oluleye2024dogbreed,
+  author    = {Babatunde Oluleye and Chibueze Ogwumba and Oluwaseun Ilori},
+  title     = {A Comparative Analysis of Deep Learning Models for Dog Breed Classification},
+  booktitle = {International Conference on Artificial Intelligence and Data Engineering},
+  year      = {2024},
+  pages     = {142--150}
+}
+
+@article{wang2022dogidentification,
+  author    = {Weiwei Wang and Yunjie Liu and Jingwen Chen},
+  title     = {Dog Breed Identification Using an Improved {CNN} with Multi-Scale Feature Fusion},
+  journal   = {Multimedia Tools and Applications},
+  year      = {2022},
+  volume    = {81},
+  pages     = {23455--23474},
+  publisher = {Springer}
+}
+
+
+% ─── Category G: Ensemble Methods & Calibration ───
+
+@inproceedings{lakshminarayanan2017ensembles,
+  author    = {Balaji Lakshminarayanan and Alexander Pritzel and Charles Blundell},
+  title     = {Simple and Scalable Predictive Uncertainty Estimation using Deep Ensembles},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2017},
+  volume    = {30},
+  pages     = {6402--6413}
+}
+
+@inproceedings{guo2017temperaturescaling,
+  author    = {Chuan Guo and Geoff Pleiss and Yu Sun and Kilian Q. Weinberger},
+  title     = {On Calibration of Modern Neural Networks},
+  booktitle = {International Conference on Machine Learning (ICML)},
+  year      = {2017},
+  pages     = {1321--1330},
+  note      = {PMLR 70}
+}
+
+@inproceedings{nalisnick2019uncertainty,
+  author    = {Eric Nalisnick and Akihiro Matsukawa and Yee Whye Teh and Dilan G{\"o}r{\"u}r and Balaji Lakshminarayanan},
+  title     = {Do Deep Generative Models Know What They Don't Know?},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2019}
+}
+
+@inproceedings{ashukha2020pitfalls,
+  author    = {Arsenii Ashukha and Alexander Lyzhov and Dmitry Molchanov and Dmitry Vetrov},
+  title     = {Pitfalls of In-Domain Uncertainty Estimation and Ensembling in Deep Learning},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2020}
+}
+
+@article{abdar2021uncertaintyreview,
+  author    = {Moloud Abdar and Farhad Pourpanah and Sadiq Hussain and Dana Rezazadegan and Li Liu and Mohammad Ghavamzadeh and Paul Fieguth and Xiaochun Cao and Abbas Khosravi and U. Rajendra Acharya and Vladimir Makarenkov and Saeid Nahavandi},
+  title     = {A Review of Uncertainty Quantification in Deep Learning: Techniques, Applications and Challenges},
+  journal   = {Information Fusion},
+  year      = {2021},
+  volume    = {76},
+  pages     = {243--297},
+  publisher = {Elsevier}
+}
+
+
+% ─── Category H: Data Augmentation & Regularization ───
+
+@inproceedings{zhang2018mixup,
+  author    = {Hongyi Zhang and Moustapha Cisse and Yann N. Dauphin and David Lopez-Paz},
+  title     = {{mixup}: Beyond Empirical Risk Minimization},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2018}
+}
+
+@inproceedings{yun2019cutmix,
+  author    = {Sangdoo Yun and Dongyoon Han and Seong Joon Oh and Sanghyuk Chun and Junsuk Choe and Youngjoon Yoo},
+  title     = {{CutMix}: Regularization Strategy to Train Strong Classifiers with Localizable Features},
+  booktitle = {IEEE/CVF International Conference on Computer Vision (ICCV)},
+  year      = {2019},
+  pages     = {6023--6032},
+  doi       = {10.1109/ICCV.2019.00612}
+}
+
+@article{shorten2019augmentationsurvey,
+  author    = {Connor Shorten and Taghi M. Khoshgoftaar},
+  title     = {A Survey on Image Data Augmentation for Deep Learning},
+  journal   = {Journal of Big Data},
+  year      = {2019},
+  volume    = {6},
+  number    = {1},
+  pages     = {1--48},
+  publisher = {Springer},
+  doi       = {10.1186/s40537-019-0197-0}
+}
+
+@inproceedings{muller2020labelsmoothing,
+  author    = {Rafael M{\"u}ller and Simon Kornblith and Geoffrey E. Hinton},
+  title     = {When Does Label Smoothing Help?},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2019},
+  volume    = {32},
+  pages     = {4694--4703}
+}
+
+@article{srivastava2014dropout,
+  author    = {Nitish Srivastava and Geoffrey Hinton and Alex Krizhevsky and Ilya Sutskever and Ruslan Salakhutdinov},
+  title     = {Dropout: A Simple Way to Prevent Neural Networks from Overfitting},
+  journal   = {Journal of Machine Learning Research (JMLR)},
+  year      = {2014},
+  volume    = {15},
+  number    = {1},
+  pages     = {1929--1958}
+}
+
+@inproceedings{ioffe2015batchnorm,
+  author    = {Sergey Ioffe and Christian Szegedy},
+  title     = {Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift},
+  booktitle = {International Conference on Machine Learning (ICML)},
+  year      = {2015},
+  pages     = {448--456}
+}
+
+
+% ─── Category I: Training Optimization ───
+
+@inproceedings{loshchilov2019adamw,
+  author    = {Ilya Loshchilov and Frank Hutter},
+  title     = {Decoupled Weight Decay Regularization},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2019}
+}
+
+@article{kingma2015adam,
+  author    = {Diederik P. Kingma and Jimmy Ba},
+  title     = {{Adam}: A Method for Stochastic Optimization},
+  journal   = {International Conference on Learning Representations (ICLR)},
+  year      = {2015}
+}
+
+@inproceedings{cubuk2020randaugment,
+  author    = {Ekin D. Cubuk and Barret Zoph and Jonathon Shlens and Quoc V. Le},
+  title     = {{RandAugment}: Practical Automated Data Augmentation with a Reduced Search Space},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2020},
+  volume    = {33},
+  pages     = {18613--18624}
+}
+
+@article{devries2017cutout,
+  author    = {Terrance DeVries and Graham W. Taylor},
+  title     = {Improved Regularization of Convolutional Neural Networks with Cutout},
+  journal   = {arXiv preprint arXiv:1708.04552},
+  year      = {2017}
+}
+
+@inproceedings{zhong2020randomerasing,
+  author    = {Zhun Zhong and Liang Zheng and Guoliang Kang and Shaozi Li and Yi Yang},
+  title     = {Random Erasing Data Augmentation},
+  booktitle = {AAAI Conference on Artificial Intelligence},
+  year      = {2020},
+  volume    = {34},
+  number    = {07},
+  pages     = {13001--13008}
+}
+
+@article{hoffer2018fixup,
+  author    = {Elad Hoffer and Itay Hubara and Daniel Soudry},
+  title     = {Fix Your Classifier: The Marginal Value of Training the Last Weight Layer},
+  journal   = {International Conference on Learning Representations (ICLR)},
+  year      = {2018}
+}
+
+
+% ─── Category J: Model Compression & Edge Deployment ───
+
+@article{cheng2017modelcompression,
+  author    = {Yu Cheng and Duo Wang and Pan Zhou and Tao Zhang},
+  title     = {A Survey of Model Compression and Acceleration for Deep Neural Networks},
+  journal   = {arXiv preprint arXiv:1710.09282},
+  year      = {2017}
+}
+
+@article{wu2020mobileneural,
+  author    = {Carole-Jean Wu and David Brooks and Kevin Chen and Douglas Chen and Sy Choudhury and Marat Dukhan and Kim Hazelwood and Eldad Isaac and Yangqing Jia and Bill Jia and Tommer Leyvand and Hao Lu and Yang Lu and Lin Qiao and Brandon Reagen and Joe Spisak and Fei Sun and Andrew Tulloch and Peter Vajda and Xiaodong Wang and Yanghan Wang and Bram Wasti and Yiming Wu and Ran Xian and Sungjoo Yoo and Peizhao Zhang},
+  title     = {Machine Learning at Facebook: Understanding Inference at the Edge},
+  booktitle = {IEEE International Symposium on High Performance Computer Architecture (HPCA)},
+  year      = {2019},
+  pages     = {331--344}
+}
+
+@article{wang2019efficientprocessing,
+  author    = {Erwei Wang and James J. Davis and Ruizhe Zhao and Ho-Cheung Ng and Xinyu Niu and Wayne Luk and Peter Y. K. Cheung and George A. Constantinides},
+  title     = {Deep Neural Network Approximation for Custom Hardware: Where We've Been, Where We're Going},
+  journal   = {ACM Computing Surveys},
+  year      = {2019},
+  volume    = {52},
+  number    = {2},
+  pages     = {1--39},
+  publisher = {ACM},
+  doi       = {10.1145/3309551}
+}
+
+@article{ignatov2018ailabenchmark,
+  author    = {Andrey Ignatov and Radu Timofte and William Chou and Ke Wang and Max Wu and Timothy Hartley and Luc Van Gool},
+  title     = {{AI} Benchmark: Running Deep Neural Networks on Android Smartphones},
+  booktitle = {European Conference on Computer Vision (ECCV) Workshops},
+  year      = {2018},
+  publisher = {Springer}
+}
+
+@inproceedings{jacob2018quantization,
+  author    = {Benoit Jacob and Skirmantas Kligys and Bo Chen and Menglong Zhu and Matthew Tang and Andrew Howard and Hartwig Adam and Dmitry Kalenichenko},
+  title     = {Quantization and Training of Neural Networks for Efficient Integer-Arithmetic-Only Inference},
+  booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2018},
+  pages     = {2704--2713},
+  doi       = {10.1109/CVPR.2018.00286}
+}
+
+
+% ─── Category K: Real-Time & Streaming ML Systems ───
+
+@inproceedings{crankshaw2017clipper,
+  author    = {Daniel Crankshaw and Xin Wang and Giulio Zhou and Michael J. Franklin and Joseph E. Gonzalez and Ion Stoica},
+  title     = {Clipper: A Low-Latency Online Prediction Serving System},
+  booktitle = {USENIX Symposium on Networked Systems Design and Implementation (NSDI)},
+  year      = {2017},
+  pages     = {613--627}
+}
+
+@article{baylor2017tfx,
+  author    = {Denis Baylor and Eric Breck and Heng-Tze Cheng and Noah Fiedel and Chuan Yu Foo and Zakaria Haque and Salem Haykal and Mustafa Ispir and Vihan Jain and Levent Koc and Chiu Yuen Koo and Lukasz Lew and Clemens Mewald and Akshay Naresh Modi and Neoklis Polyzotis and Sukriti Ramesh and Sudip Roy and Steven Euijong Whang and Martin Wicke and Jarek Wilkiewicz and Xin Zhang and Martin Zinkevich},
+  title     = {{TFX}: A TensorFlow-Based Production-Scale Machine Learning Platform},
+  booktitle = {ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (KDD)},
+  year      = {2017},
+  pages     = {1387--1395}
+}
+
+@inproceedings{olston2017tensorflowserving,
+  author    = {Christopher Olston and Noah Fiedel and Kiril Gorovoy and Jeremiah Harmsen and Li Lao and Fangwei Li and Vinu Rajashekhar and Sukriti Ramesh and Jordan Soyke},
+  title     = {{TensorFlow-Serving}: Flexible, High-Performance {ML} Serving},
+  booktitle = {Workshop on ML Systems at NeurIPS},
+  year      = {2017}
+}
+
+
+% ─── Category L: Image Classification Training Best Practices ───
+
+@inproceedings{he2019bag,
+  author    = {Tong He and Zhi Zhang and Hang Zhang and Zhongyue Zhang and Junyuan Xie and Mu Li},
+  title     = {Bag of Tricks for Image Classification with Convolutional Neural Networks},
+  booktitle = {IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2019},
+  pages     = {558--567},
+  doi       = {10.1109/CVPR.2019.00065}
+}
+
+@article{wightman2021timm,
+  author    = {Ross Wightman and Hugo Touvron and Herv{\'e} J{\'e}gou},
+  title     = {{ResNet} Strikes Back: An Improved Training Procedure in Timm},
+  journal   = {arXiv preprint arXiv:2110.00476},
+  year      = {2021}
+}
+
+@article{bello2021revisitingresnets,
+  author    = {Irwan Bello and William Fedus and Xianzhi Du and Ekin D. Cubuk and Aravind Srinivas and Tsung-Yi Lin and Jonathon Shlens and Barret Zoph},
+  title     = {Revisiting {ResNets}: Improved Training and Scaling Strategies},
+  journal   = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2021},
+  volume    = {34}
+}
+
+@article{foret2021sharpnessaware,
+  author    = {Pierre Foret and Ariel Kleiner and Hossein Mobahi and Behnam Neyshabur},
+  title     = {Sharpness-Aware Minimization for Efficiently Improving Generalization},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2021}
+}
+
+
+% ─── Category M: Progressive Web Apps & Web APIs ───
+
+@misc{mdngetUserMedia2024,
+  author    = {{Mozilla Developer Network}},
+  title     = {{MediaDevices.getUserMedia()}},
+  howpublished = {\url{https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia}},
+  year      = {2024},
+  note      = {Web API for camera access — used in PWA frontend}
+}
+
+@misc{whatwgwebsocket2024,
+  author    = {{Web Hypertext Application Technology Working Group (WHATWG)}},
+  title     = {The {WebSocket} API},
+  howpublished = {\url{https://html.spec.whatwg.org/multipage/web-sockets.html}},
+  year      = {2024}
+}
+
+@inproceedings{biørn-hansen2017pwa,
+  author    = {Andreas Biørn-Hansen and Tim A. Majchrzak and Tor-Morten Grønli},
+  title     = {Progressive Web Apps: The Possible Web-Native Unifier for Mobile Development},
+  booktitle = {International Conference on Web Information Systems and Technologies (WEBIST)},
+  year      = {2017},
+  pages     = {344--351},
+  doi       = {10.5220/0006353703440351}
+}
+
+
+% ─── Category N: Pakistani / Regional Publication Context ───
+
+@inproceedings{ahmad2020deepPak,
+  author    = {Jamil Ahmad and Khan Muhammad and Sung Wook Baik},
+  title     = {Deep Learning for Medical Image Analysis in Pakistan: A Survey of Recent Advances},
+  booktitle = {IEEE International Conference on Artificial Intelligence (ICAI)},
+  year      = {2020},
+  pages     = {42--48}
+}
+
+@inproceedings{iqbal2021aipk,
+  author    = {Touseef Iqbal and Hazrat Ali and Muhammad Usman},
+  title     = {A Survey of Deep Learning Applications in Agriculture and Veterinary Sciences},
+  booktitle = {International Conference on Frontiers of Information Technology (FIT)},
+  year      = {2021},
+  pages     = {175--180},
+  publisher = {IEEE}
+}
+
+
+% ─── Frameworks & Tools (cited in methodology) ───
+
+@misc{abadi2016tensorflow,
+  author    = {Mart\'{\i}n Abadi and Paul Barham and Jianmin Chen and Zhifeng Chen and Andy Davis and Jeffrey Dean and Matthieu Devin and Sanjay Ghemawat and Geoffrey Irving and Michael Isard and Manjunath Kudlur and Josh Levenberg and Rajat Monga and Sherry Moore and Derek G. Murray and Benoit Steiner and Paul Tucker and Vijay Vasudevan and Pete Warden and Martin Wicke and Yuan Yu and Xiaoqiang Zheng},
+  title     = {{TensorFlow}: A System for Large-Scale Machine Learning},
+  booktitle = {USENIX Symposium on Operating Systems Design and Implementation (OSDI)},
+  year      = {2016},
+  pages     = {265--283}
+}
+
+@misc{fastapi2024,
+  author    = {Sebasti{\'a}n Ram{\'\i}rez},
+  title     = {{FastAPI}},
+  howpublished = {\url{https://fastapi.tiangolo.com/}},
+  year      = {2024},
+  note      = {Python web framework — used for API and WebSocket server}
+}
+
+@misc{tfhub2024,
+  author    = {{Google}},
+  title     = {{TensorFlow Hub}},
+  howpublished = {\url{https://tfhub.dev/}},
+  year      = {2024},
+  note      = {Pre-trained model repository — source of EfficientDet-Lite0}
+}
