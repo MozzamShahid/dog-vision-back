@@ -1,3 +1,0 @@
-Model,Optimal Temperature,Interpretation
-EfficientNetV2S,0.67,Overconfident (T < 1.0)
-ConvNeXtTiny,0.73,Overconfident (T < 1.0)

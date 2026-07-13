@@ -544,17 +544,17 @@ Several directions for future investigation emerge from this work:
 | Fig | Description | Data Source | Status |
 |-----|-------------|-------------|:---:|
 | 1 | System architecture diagram | Mermaid → render | ✅ `paper/figures/fig1_architecture.mermaid` |
-| 2 | Confusion matrix (top 20 breeds) | Validation predictions | ⬜ Run `exp1` on Kaggle |
-| 3 | Accuracy vs. parameters (3 backbones) | Section 5.2 | ✅ `paper/figures/fig3_accuracy_vs_params.png` |
-| 4 | Reliability diagrams (before/after calibration) | Validation logits | ✅ `paper/figures/fig4_reliability_diagram.png` |
-| 5 | FPS vs. number of dogs | Timed pipeline runs | ✅ `paper/figures/fig5_fps_vs_dogs.png` |
+| 2 | Confusion matrix (top 20 breeds) | Validation predictions | ⬜ Run `exp1_validation_suite.py` then `exp1_figures.py` |
+| 3 | Accuracy vs. parameters (3 backbones) | Section 5.2 | ✅ `paper/scripts/fig3_accuracy.py` |
+| 4 | Reliability diagrams (before/after calibration) | Validation logits | ✅ `paper/scripts/exp3_calibration.py` |
+| 5 | FPS vs. number of dogs | Timed pipeline runs | ✅ `paper/scripts/generate_all_figures.py` |
 | 6 | Sample detection frames (app screenshots) | HF Spaces app | ⬜ Take screenshots from phone |
-| 7 | Model agreement heatmap | Validation predictions | ⬜ Run `exp1` on Kaggle |
-| 8 | Per-breed accuracy (sorted bar chart) | Section 5.7 | ⬜ Run `exp1` on Kaggle |
-| 9 | Confidence distribution histogram | Validation predictions | ⬜ Run `exp1` on Kaggle |
-| 10 | Training curves (accuracy + loss) | Training logs | ⬜ Parse Kaggle training CSVs |
-| 11 | Error reduction analysis | Section 5.3 | ✅ `paper/figures/fig11_error_reduction.png` |
-| 12 | Latency breakdown | Timed measurements | ✅ `paper/figures/fig12_latency_breakdown.png` |
+| 7 | Model agreement heatmap | Validation predictions | ⬜ Run `exp1_validation_suite.py` then `exp1_figures.py` |
+| 8 | Per-breed accuracy (sorted bar chart) | Section 5.7 | ⬜ Run `exp1_validation_suite.py` then `exp1_figures.py` |
+| 9 | Confidence distribution histogram | Validation predictions | ⬜ Run `exp1_validation_suite.py` then `exp3_calibration.py` |
+| 10 | Training curves (accuracy + loss) | Training logs | ⬜ Run `exp7_training_curves.py` on Kaggle training CSV |
+| 11 | Error reduction analysis | Section 5.3 | ✅ `paper/scripts/generate_all_figures.py` |
+| 12 | Latency breakdown | Timed measurements | ✅ `paper/scripts/generate_all_figures.py` |
 
 ---
 

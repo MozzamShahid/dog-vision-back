@@ -211,19 +211,24 @@ class DogBreedPredictor:
         calibrated = calibrated / np.sum(calibrated, axis=-1, keepdims=True)
         return calibrated
 
-    def predict(self, image_bytes: bytes, use_tta: bool = False):
+    def predict(self, image_bytes: bytes, use_tta: bool = False, return_raw: bool = False):
         """
         Predict the dog breed from image bytes.
 
         Args:
             image_bytes: Raw image bytes (JPEG/PNG).
             use_tta: Whether to use test-time augmentation.
+            return_raw: If True, also return uncalibrated (T=1.0) softmax
+                predictions alongside temperature-scaled outputs. Useful for
+                calibration analysis.
 
         Returns:
-            dict with primary, top_k, is_unknown, and ensemble info.
+            dict with primary, top_k, is_unknown, and ensemble info; plus raw
+            predictions when return_raw=True.
         """
         # Get predictions from all models
         all_predictions = []
+        all_raw_predictions = [] if return_raw else None
         for model, temperature in zip(self.models, self.temperatures):
             # Resize to whatever this model expects (224 or 384) instead of
             # assuming 224 — lets 384 checkpoints join the ensemble safely.
@@ -235,6 +240,8 @@ class DogBreedPredictor:
             else:
                 image = preprocess_image(image_bytes, img_size=img_size)
                 preds = model.predict(image, verbose=0)[0]
+            if return_raw:
+                all_raw_predictions.append(preds.copy())
             preds = self._apply_temperature(preds, temperature)
             all_predictions.append(preds)
 
@@ -290,6 +297,27 @@ class DogBreedPredictor:
                     {"breed": self.labels[np.argmax(p)],
                      "confidence": round(float(np.max(p)), 4)}
                     for p in all_predictions
+                ],
+            }
+
+        # Optionally expose uncalibrated (raw) predictions for calibration studies
+        if return_raw:
+            raw_ensemble = np.mean(all_raw_predictions, axis=0) if self.num_models > 1 else all_raw_predictions[0]
+            raw_top_indices = np.argsort(raw_ensemble)[-self.top_k:][::-1]
+            result["raw"] = {
+                "primary": {
+                    "breed": self.labels[raw_top_indices[0]],
+                    "confidence": round(float(raw_ensemble[raw_top_indices[0]]), 4),
+                },
+                "top_k": [
+                    {"rank": rank + 1, "breed": self.labels[idx],
+                     "confidence": round(float(raw_ensemble[idx]), 4)}
+                    for rank, idx in enumerate(raw_top_indices)
+                ],
+                "individual_predictions": [
+                    {"breed": self.labels[np.argmax(p)],
+                     "confidence": round(float(np.max(p)), 4)}
+                    for p in all_raw_predictions
                 ],
             }
 

@@ -66,3 +66,9 @@ training_log*.csv
 *.keras
 models/**/*.h5
 models/*.h5
+
+# Generated paper artifacts (source-only in git; regenerate on Kaggle/HF)
+paper/results/*
+!paper/results/.gitkeep
+paper/figures/*.png
+

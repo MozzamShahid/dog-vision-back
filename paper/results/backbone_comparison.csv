@@ -1,5 +1,0 @@
-Model,Parameters,Top-1,Top-3,Top-5,Inference Time (ms)
-MobileNetV2,2.4M,88.05%,96.80%,97.89%,~85 ms
-EfficientNetV2S,21.0M,89.92%,98.67%,99.45%,135 ms
-ConvNeXtTiny,28.3M,90.78%,98.75%,99.53%,161 ms
-Ensemble (ours),49.3M,92.42%,99.30%,99.69%,336 ms

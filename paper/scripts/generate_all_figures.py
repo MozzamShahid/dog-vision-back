@@ -107,43 +107,6 @@ def fig12_latency_breakdown():
     print("Fig 12 saved: paper/figures/fig12_latency_breakdown.png")
 
 
-def fig_calibration_sketch():
-    """Reliability diagram placeholder with real temperature values."""
-    fig, ax = plt.subplots(figsize=(6, 5))
-
-    # Simulated reliability curves (before = overconfident, after = calibrated)
-    bin_centers = np.linspace(0.05, 0.95, 15)
-    before_y = bin_centers * 0.7 + 0.1  # overconfident: low accuracy for given confidence
-    after_y = bin_centers * 0.95  # well-calibrated
-
-    ax.plot([0, 1], [0, 1], '--', color='gray', alpha=0.5, label='Perfect calibration')
-    ax.plot(bin_centers, before_y, 'o-', color='#e94560', linewidth=2, markersize=6,
-            label=f'Before calibration (ECE ≈ high)')
-    ax.plot(bin_centers, after_y, 's-', color='#4ecca3', linewidth=2, markersize=6,
-            label=f'After temp. scaling (T=0.67, ECE ≈ low)')
-
-    ax.fill_between(bin_centers, before_y, bin_centers, alpha=0.15, color='#e94560')
-    ax.fill_between(bin_centers, after_y, bin_centers, alpha=0.15, color='#4ecca3')
-
-    ax.annotate('Overconfident\nregion', xy=(0.7, 0.55), xytext=(0.45, 0.75),
-                arrowprops=dict(arrowstyle='->', color='#e94560'), fontsize=9, color='#e94560')
-    ax.annotate('Calibrated\nregion', xy=(0.5, 0.48), xytext=(0.2, 0.3),
-                arrowprops=dict(arrowstyle='->', color='#4ecca3'), fontsize=9, color='#4ecca3')
-
-    ax.set_xlabel('Confidence', fontsize=12)
-    ax.set_ylabel('Accuracy', fontsize=12)
-    ax.set_title('Reliability Diagram: EfficientNetV2S\n(Before vs. After Temperature Scaling)',
-                 fontsize=13, fontweight='bold')
-    ax.legend(fontsize=9, loc='upper left')
-    ax.grid(alpha=0.3)
-    ax.set_xlim(0, 1)
-    ax.set_ylim(0, 1)
-
-    plt.tight_layout()
-    plt.savefig('paper/figures/fig4_reliability_diagram.png', dpi=150, bbox_inches='tight')
-    print("Fig 4 saved: paper/figures/fig4_reliability_diagram.png")
-
-
 def fig_backbone_comparison_table():
     """Generate backbone comparison text table for LaTeX."""
     data = [
@@ -176,7 +139,9 @@ if __name__ == '__main__':
     fig5_fps_vs_dogs()
     fig11_error_reduction()
     fig12_latency_breakdown()
-    fig_calibration_sketch()
+    # Fig 4 (reliability diagram) is generated from real validation data by
+    # exp3_calibration.py after running exp1_validation_suite.py.
     fig_backbone_comparison_table()
     fig_temperature_table()
-    print("\nAll figures generated successfully.")
+    print("\nAll non-data-dependent figures generated successfully.")
+    print("Run exp1_validation_suite.py then exp3_calibration.py for Fig 4.")
