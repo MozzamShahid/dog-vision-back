@@ -77,6 +77,12 @@ def main():
     parser.add_argument("--output-dir", default="paper/results", help="Where to write results")
     parser.add_argument("--max-images", type=int, default=0, help="0 = all images; else random sample")
     parser.add_argument("--tta", action="store_true", help="Use test-time augmentation (2-8x slower)")
+    parser.add_argument("--val-only", action="store_true",
+                        help="Evaluate only the held-out validation split (validation_split=0.2, seed=42) "
+                             "used during training, so the reported accuracy is not contaminated by "
+                             "training images. Reconstructs the exact split via image_dataset_from_directory.")
+    parser.add_argument("--val-split", type=float, default=0.2, help="Validation fraction used at training time")
+    parser.add_argument("--val-seed", type=int, default=42, help="Seed used for the train/val split at training time")
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
@@ -124,6 +130,30 @@ def main():
 
     n_total = len(image_paths)
     print(f"      {n_total} images found")
+
+    # Restrict to the exact held-out validation split used during training so the
+    # reported accuracy is measured only on images the models never saw.
+    if args.val_only:
+        print(f"      Reconstructing held-out split (validation_split={args.val_split}, seed={args.val_seed})...")
+        import tensorflow as tf
+        val_ds = tf.keras.utils.image_dataset_from_directory(
+            args.images_dir,
+            validation_split=args.val_split,
+            subset="validation",
+            seed=args.val_seed,
+            image_size=(224, 224),
+            batch_size=1,
+            label_mode="categorical",
+            shuffle=False,
+        )
+        # file_paths reproduces the exact held-out files regardless of image_size/
+        # batch_size/label_mode — only directory, validation_split, subset and seed matter.
+        val_basenames = {os.path.basename(p) for p in val_ds.file_paths}
+        keep = [i for i, p in enumerate(image_paths) if os.path.basename(p) in val_basenames]
+        image_paths = [image_paths[i] for i in keep]
+        true_labels = [true_labels[i] for i in keep]
+        print(f"      Held-out validation images: {len(image_paths)} (of {n_total} total)")
+        n_total = len(image_paths)
 
     if args.max_images > 0 and args.max_images < n_total:
         rng = np.random.default_rng(42)
