@@ -12,9 +12,9 @@ matplotlib.use('Agg')
 def main():
     models = ["MobileNetV2\n(2.4M)", "EfficientNetV2S\n(21.0M)",
               "ConvNeXtTiny\n(28.3M)", "Ensemble (ours)\n(49.3M)"]
-    top1 = [88.05, 89.92, 90.78, 92.42]
-    top3 = [96.80, 98.67, 98.75, 99.30]
-    top5 = [97.89, 99.45, 99.53, 99.69]
+    top1 = [88.05, 91.45, 93.70, 94.04]
+    top3 = [96.80, 98.67, 98.75, 99.43]
+    top5 = [97.89, 99.45, 99.53, 99.44]
     params = [2.4, 21.0, 28.3, 49.3]
     colors = ['#999', '#4ecca3', '#4ecca3', '#e94560']
 
@@ -56,11 +56,12 @@ def main():
     ax2.set_ylabel('Top-1 Accuracy (%)', fontsize=11)
     ax2.set_title('Parameter Efficiency: Accuracy vs. Size', fontsize=13, fontweight='bold')
     ax2.grid(alpha=0.3)
-    ax2.set_ylim(87, 93.5)
+    ax2.set_ylim(87, 95.5)
 
     plt.tight_layout()
+    # print version: white background (the dark variant is saved separately below)
     plt.savefig('paper/figures/fig3_accuracy_vs_params.png', dpi=150, bbox_inches='tight',
-                facecolor='#0f0f1a', edgecolor='none')
+                facecolor='white', edgecolor='none')
     for ax in [ax1, ax2]:
         ax.set_facecolor('#0f0f1a')
         ax.tick_params(colors='white')

@@ -1,0 +1,37 @@
+% Map bare Unicode math/symbol characters that appear in prose to proper
+% LaTeX so they render under XeLaTeX/tectonic instead of dropping out.
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{newunicodechar}
+% Captions already carry an explicit "Figure N:" label that matches the
+% in-text references, so suppress pandoc's automatic figure counter to
+% avoid double numbering ("Figure 6: Figure 7: ...").
+\usepackage{caption}
+\captionsetup{labelformat=empty}
+
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{←}{\ensuremath{\leftarrow}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{∨}{\ensuremath{\vee}}
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{₁}{\ensuremath{_1}}
+\newunicodechar{₂}{\ensuremath{_2}}
+\newunicodechar{ₙ}{\ensuremath{_n}}
+\newunicodechar{¹}{\ensuremath{^1}}
+\newunicodechar{²}{\ensuremath{^2}}
+\newunicodechar{𝟙}{\ensuremath{\mathbb{1}}}
+\newunicodechar{𝒟}{\ensuremath{\mathcal{D}}}
+\newunicodechar{∑}{\ensuremath{\sum}}

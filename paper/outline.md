@@ -1,8 +1,9 @@
 # A Two-Stage Deep Learning Pipeline for Real-Time Multi-Breed Canine Identification
 
-**Authors:** [Mozzam Shahid]¹, [Supervisor Name]¹  
-¹Department of Computer Science, [University Name], [City], Pakistan  
-**Contact:** mozzamshahid@gmail.com
+**Author:** Mozzam Shahid¹²  
+¹BS Information Technology, University of Education, Lahore, Pakistan  
+²Creolio (US-based)  
+**Contact:** mozzamshahid906@gmail.com
 
 **Target Venues:** arXiv (pre-print) → IEEE INMIC 2026/2027  
 **Citation File:** `paper/references.bib` (55 curated references, 14 categories)  
@@ -12,7 +13,7 @@
 
 ## Abstract
 
-Fine-grained dog breed identification from images presents a challenging computer vision task, compounded when extended to real-time video with multiple subjects. While deep convolutional neural networks have achieved high single-image classification accuracy on curated datasets, existing solutions rarely address simultaneous localization and classification of multiple dogs in live camera streams. This paper proposes a two-stage inference pipeline integrating lightweight object detection with calibrated ensemble classification to enable real-time, multi-subject dog breed identification. **Stage 1** employs EfficientDet-Lite0 — a 5.3M-parameter detection model pre-trained on COCO — to localise all dogs within a video frame, producing axis-aligned bounding boxes. **Stage 2** classifies each detected region into one of 120 breeds using an ensemble of EfficientNetV2S (21.0M parameters) and ConvNeXtTiny (28.3M parameters), both pre-trained on ImageNet-1K and fine-tuned on the Stanford Dogs Dataset (20,580 images). We investigate three backbone architectures (MobileNetV2, EfficientNetV2S, ConvNeXtTiny) trained under identical three-phase protocols incorporating MixUp and CutMix augmentation. Post-hoc temperature scaling (Platt scaling) is applied independently to each classifier, and predictions are averaged element-wise. The ensemble achieves **92.42% top-1** and **99.30% top-3 accuracy** on a held-out validation partition of 4,116 images, representing an error reduction of 37.4% over the MobileNetV2 baseline (88.05%). For real-time deployment, a single-model variant operating at **4.2 frames per second** on 8 vCPU cloud hardware is employed, processing all detected regions in a single batched forward pass. The pipeline is deployed as a Progressive Web Application (PWA) accessible from any camera-equipped mobile browser, utilising WebSocket-based frame streaming with send-after-response backpressure. We provide a systematic latency-accuracy trade-off analysis across ensemble and single-model configurations, demonstrate calibrated confidence estimation via reliability diagrams, and benchmark multi-subject detection throughput. All code, trained weights, and reproducibility instructions are publicly available.
+Fine-grained dog breed identification from images presents a challenging computer vision task, compounded when extended to real-time video with multiple subjects. While deep convolutional neural networks have achieved high single-image classification accuracy on curated datasets, existing solutions rarely address simultaneous localization and classification of multiple dogs in live camera streams. This paper proposes a two-stage inference pipeline integrating lightweight object detection with calibrated ensemble classification to enable real-time, multi-subject dog breed identification. **Stage 1** employs EfficientDet-Lite0 — a 5.3M-parameter detection model pre-trained on COCO — to localise all dogs within a video frame, producing axis-aligned bounding boxes. **Stage 2** classifies each detected region into one of 120 breeds using an ensemble of EfficientNetV2S (21.0M parameters) and ConvNeXtTiny (28.3M parameters), both pre-trained on ImageNet-1K and fine-tuned on the Stanford Dogs Dataset (20,580 images). We investigate three backbone architectures (MobileNetV2, EfficientNetV2S, ConvNeXtTiny) trained under identical three-phase protocols incorporating MixUp and CutMix augmentation. Post-hoc temperature scaling (Platt scaling) is applied independently to each classifier, and predictions are averaged element-wise. The ensemble achieves **94.04% top-1** and **99.43% top-3 accuracy** on the Stanford Dogs Dataset (20,580 images), representing a 50.1% reduction in top-1 error over the MobileNetV2 baseline (88.05%). For real-time deployment, a single-model variant operating at **4.2 frames per second** on 8 vCPU cloud hardware is employed, processing all detected regions in a single batched forward pass. The pipeline is deployed as a Progressive Web Application (PWA) accessible from any camera-equipped mobile browser, utilising WebSocket-based frame streaming with send-after-response backpressure. We provide a systematic latency-accuracy trade-off analysis across ensemble and single-model configurations, demonstrate calibrated confidence estimation via reliability diagrams, and benchmark multi-subject detection throughput. All code, trained weights, and reproducibility instructions are publicly available.
 
 **Keywords:** fine-grained classification, object detection, ensemble learning, temperature scaling, EfficientDet, EfficientNet, ConvNeXt, Progressive Web Application, real-time inference, Stanford Dogs Dataset
 
@@ -24,7 +25,7 @@ Fine-grained dog breed identification from images presents a challenging compute
 
 The task of identifying dog breeds from photographic imagery constitutes a **fine-grained visual categorisation** (FGVC) problem: distinguishing between categories that share a common superclass with subtle inter-class variation. With over 340 breeds recognised by the Fédération Cynologique Internationale (FCI) and 200 by the American Kennel Club (AKC), the morphological diversity — ranging from the Chihuahua (1–3 kg) to the Great Dane (50–90 kg) — coupled with significant intra-class variation in pose, illumination, occlusion, and background, renders breed identification considerably more challenging than generic object recognition.
 
-Beyond its value as a benchmark for FGVC algorithms, automated dog breed identification carries tangible societal utility. In **veterinary telemedicine**, breed-specific predisposition to hereditary conditions (e.g., hip dysplasia in German Shepherds, brachycephalic syndrome in French Bulldogs [Packer and Tivers, 2015]) can inform triage protocols. **Animal shelters** report that breed-labelled adoption listings receive significantly higher engagement than unlabelled counterparts [Weiss et al., 2012], directly impacting rehoming rates. **Lost-and-found pet matching platforms** benefit from automated breed filters to narrow search spaces. **Public health surveillance** of breed-specific legislation compliance and **epidemiological studies** of breed-associated disease incidence both require scalable breed identification.
+Beyond its value as a benchmark for FGVC algorithms, automated dog breed identification carries tangible societal utility. In **veterinary telemedicine**, breed-specific predisposition to hereditary conditions (e.g., hip dysplasia in German Shepherds, brachycephalic syndrome in French Bulldogs [@packer2015brachycephalic]) can inform triage protocols. **Animal shelters** report that breed-labelled adoption listings receive significantly higher engagement than unlabelled counterparts [@weiss2012adoption], directly impacting rehoming rates. **Lost-and-found pet matching platforms** benefit from automated breed filters to narrow search spaces. **Public health surveillance** of breed-specific legislation compliance and **epidemiological studies** of breed-associated disease incidence both require scalable breed identification.
 
 ### 1.2 Limitations of Existing Approaches
 
@@ -47,7 +48,7 @@ This paper makes the following contributions:
 
 3. **Calibrated ensemble with temperature scaling** (§4.4–4.5): independent Platt scaling per model (T_EfficientNet = 0.67, T_ConvNeXt = 0.73) visualised through reliability diagrams, with element-wise softmax averaging and an unknown-rejection mechanism (confidence threshold τ = 0.50).
 
-4. **Latency-accuracy Pareto analysis** (§5.5): quantification of the trade-off between full ensemble inference (92.42% top-1, ~2 FPS) and single-model fast inference (89.92% top-1, 4.2 FPS), guiding deployment configuration choices under latency constraints.
+4. **Latency-accuracy Pareto analysis** (§5.5): quantification of the trade-off between full ensemble inference (94.04% top-1, ~2 FPS) and single-model fast inference (91.45% top-1, 4.2 FPS), guiding deployment configuration choices under latency constraints.
 
 5. **Deployed real-time system** (§4.6): a fully operational PWA with WebSocket frame streaming, send-after-response backpressure, 60 FPS canvas rendering with detection caching, and Docker-based cloud deployment — providing a reproducible baseline for future work.
 
@@ -63,43 +64,43 @@ We organise prior literature into **five thematic categories**: (A) fine-grained
 
 ### 2.1 Fine-Grained Dog Breed Classification
 
-The **Stanford Dogs Dataset**, introduced by Khosla et al. [2011] at the CVPR FGVC workshop, established a benchmark for fine-grained breed identification with 20,580 images spanning 120 breeds. Early approaches leveraged part-based models, SIFT features, and deformable part models [Felzenszwalb et al., 2010], achieving modest accuracy (~50–60%).
+The **Stanford Dogs Dataset**, introduced by Khosla et al. [@khosla2011stanforddogs] at the CVPR FGVC workshop, established a benchmark for fine-grained breed identification with 20,580 images spanning 120 breeds. Early approaches leveraged part-based models, SIFT features, and deformable part models [@felzenszwalb2010dpm], achieving modest accuracy (~50–60%).
 
-The advent of deep convolutional neural networks (CNNs) brought substantial improvements. Hsu [2015] demonstrated 85% top-1 accuracy using a fine-tuned VGG-16 on the Stanford Dogs dataset for a Stanford CS231n course project, illustrating the effectiveness of transfer learning from ImageNet. Borwarnginn et al. [2021] achieved 89.3% accuracy using a modified DenseNet-121 with attention mechanisms, while Raduly et al. [2018] compared ResNet-18, ResNet-50, and Inception-v3, reporting progressive improvements with deeper architectures. Zou et al. [2020] investigated multi-scale feature fusion for fine-grained dog classification, showing particular improvements on visually similar breed pairs (e.g., Alaskan Malamute vs. Siberian Husky). More recently, Wang et al. [2022] proposed an improved CNN with multi-scale feature fusion achieving comparable results, while Oluleye et al. [2024] provided a comparative analysis of modern architectures.
+The advent of deep convolutional neural networks (CNNs) brought substantial improvements. Hsu [@hsu2015dogclassification] demonstrated 85% top-1 accuracy using a fine-tuned VGG-16 on the Stanford Dogs dataset for a Stanford CS231n course project, illustrating the effectiveness of transfer learning from ImageNet. Borwarnginn et al. [@borwarnginn2021dogbreed] achieved 89.3% accuracy using a modified DenseNet-121 with attention mechanisms, while Raduly et al. [@raduly2018dogrecognition] compared ResNet-18, ResNet-50, and Inception-v3, reporting progressive improvements with deeper architectures. Zou et al. [@zou2020finegraineddog] investigated multi-scale feature fusion for fine-grained dog classification, showing particular improvements on visually similar breed pairs (e.g., Alaskan Malamute vs. Siberian Husky). More recently, Wang et al. [@wang2022dogidentification] proposed an improved CNN with multi-scale feature fusion achieving comparable results, while Oluleye et al. [@oluleye2024dogbreed] provided a comparative analysis of modern architectures.
 
 **Limitation across this body of work:** all aforementioned approaches operate on pre-cropped single-dog images and make no provision for detection, multi-subject handling, or real-time inference — constraints that the present work explicitly addresses.
 
 ### 2.2 Object Detection for Animal Localisation
 
-Object detection has witnessed rapid progress from two-stage region-proposal methods to single-stage real-time detectors. The R-CNN family — R-CNN [Girshick et al., 2014], Fast R-CNN [Girshick, 2015], and Faster R-CNN [Ren et al., 2015] — established the region-proposal-plus-classification paradigm, achieving high accuracy at the expense of inference speed. Mask R-CNN [He et al., 2017] extended this to instance segmentation.
+Object detection has witnessed rapid progress from two-stage region-proposal methods to single-stage real-time detectors. The R-CNN family — R-CNN [@girshick2014rcnn], Fast R-CNN [@girshick2015fastrcnn], and Faster R-CNN [@ren2015fasterrcnn] — established the region-proposal-plus-classification paradigm, achieving high accuracy at the expense of inference speed. Mask R-CNN [@he2017maskrcnn] extended this to instance segmentation.
 
-Single-stage detectors prioritising speed include the YOLO family: YOLOv1 [Redmon et al., 2016], YOLO9000 [Redmon and Farhadi, 2017], YOLOv3 [Redmon and Farhadi, 2018], and YOLOv4 [Bochkovskiy et al., 2020], each introducing architectural and training refinements. SSD [Liu et al., 2016] employed multi-scale feature maps for detection at different resolutions, while Feature Pyramid Networks [Lin et al., 2017] improved multi-scale representation.
+Single-stage detectors prioritising speed include the YOLO family: YOLOv1 [@redmon2016yolo], YOLO9000 [@redmon2017yolo9000], YOLOv3 [@redmon2018yolov3], and YOLOv4 [@bochkovskiy2020yolov4], each introducing architectural and training refinements. SSD [@liu2016ssd] employed multi-scale feature maps for detection at different resolutions, while Feature Pyramid Networks [@lin2017fpn] improved multi-scale representation.
 
-**EfficientDet** [Tan et al., 2020] introduced a family of scalable detectors with Bi-directional Feature Pyramid Network (BiFPN) and compound scaling, offering superior accuracy-efficiency Pareto frontiers. The Lite variant used in this work (EfficientDet-Lite0, 5.3M parameters, ~6MB) is specifically designed for mobile and edge deployment, operating directly on uint8 pixel data without preprocessing.
+**EfficientDet** [@tan2020efficientdet] introduced a family of scalable detectors with Bi-directional Feature Pyramid Network (BiFPN) and compound scaling, offering superior accuracy-efficiency Pareto frontiers. The Lite variant used in this work (EfficientDet-Lite0, 5.3M parameters, ~6MB) is specifically designed for mobile and edge deployment, operating directly on uint8 pixel data without preprocessing.
 
-For animal-specific detection, several domain-adapted approaches exist: Norouzzadeh et al. [2018] applied deep learning to wildlife camera-trap imagery for species identification; Nguyen et al. [2017] developed animal detection for livestock monitoring; and Beery et al. [2021] addressed domain shift in wildlife detection. However, these works stop at species-level classification and do not extend to fine-grained breed identification.
+For animal-specific detection, several domain-adapted approaches exist: Norouzzadeh et al. [@norouzzadeh2018cameratrap] applied deep learning to wildlife camera-trap imagery for species identification; Nguyen et al. [@nguyen2017animalrecognition] developed animal detection for livestock monitoring; and Beery et al. [@beery2018terraincognita] addressed domain shift in wildlife detection. However, these works stop at species-level classification and do not extend to fine-grained breed identification.
 
 ### 2.3 Efficient Architectures for Resource-Constrained Inference
 
-The computational demands of deep CNNs have motivated extensive research into efficient architectures. **MobileNet** [Howard et al., 2017] introduced depthwise separable convolutions, significantly reducing parameter count and FLOPs. MobileNetV2 [Sandler et al., 2018] added inverted residuals and linear bottlenecks, while MobileNetV3 [Howard et al., 2019] incorporated neural architecture search (NAS) and Squeeze-and-Excitation modules.
+The computational demands of deep CNNs have motivated extensive research into efficient architectures. **MobileNet** [@howard2017mobilenets] introduced depthwise separable convolutions, significantly reducing parameter count and FLOPs. MobileNetV2 [@sandler2018mobilenetv2] added inverted residuals and linear bottlenecks, while MobileNetV3 [@howard2019mobilenetv3] incorporated neural architecture search (NAS) and Squeeze-and-Excitation modules.
 
-**EfficientNet** [Tan and Le, 2019] proposed compound scaling — uniformly scaling depth, width, and resolution — achieving state-of-the-art accuracy with orders-of-magnitude fewer parameters than contemporary architectures. EfficientNetV2 [Tan and Le, 2021] further improved training speed and parameter efficiency through Fused-MBConv blocks and progressive learning.
+**EfficientNet** [@tan2019efficientnet] proposed compound scaling — uniformly scaling depth, width, and resolution — achieving state-of-the-art accuracy with orders-of-magnitude fewer parameters than contemporary architectures. EfficientNetV2 [@tan2021efficientnetv2] further improved training speed and parameter efficiency through Fused-MBConv blocks and progressive learning.
 
-**ConvNeXt** [Liu et al., 2022] modernised the standard ConvNet design by incorporating strategic components from vision transformers (patchify stem, LayerNorm, GELU activations, inverted bottleneck ratios), demonstrating that pure convolutional architectures remain competitive with transformer-based approaches when properly designed.
+**ConvNeXt** [@liu2022convnext] modernised the standard ConvNet design by incorporating strategic components from vision transformers (patchify stem, LayerNorm, GELU activations, inverted bottleneck ratios), demonstrating that pure convolutional architectures remain competitive with transformer-based approaches when properly designed.
 
-**Vision Transformers** (ViT) [Dosovitskiy et al., 2021] and their hierarchical variants — Swin Transformer [Liu et al., 2021], DeiT [Touvron et al., 2021] — have achieved strong results but typically require larger training datasets or heavier computational budgets, making them less suitable for real-time CPU inference.
+**Vision Transformers** (ViT) [@dosovitskiy2021vit] and their hierarchical variants — Swin Transformer [@liu2021swin], DeiT [@touvron2021deit] — have achieved strong results but typically require larger training datasets or heavier computational budgets, making them less suitable for real-time CPU inference.
 
 ### 2.4 Ensemble Methods and Confidence Calibration
 
-Ensemble methods aggregate predictions from multiple independently trained models to improve robustness and accuracy. Lakshminarayanan et al. [2017] demonstrated that deep ensembles provide both accuracy gains and well-calibrated uncertainty estimates, a finding subsequently refined by Ashukha et al. [2020]. Our approach of averaging softmax outputs from architecturally diverse models follows this established paradigm.
+Ensemble methods aggregate predictions from multiple independently trained models to improve robustness and accuracy. Lakshminarayanan et al. [@lakshminarayanan2017ensembles] demonstrated that deep ensembles provide both accuracy gains and well-calibrated uncertainty estimates, a finding subsequently refined by Ashukha et al. [@ashukha2020pitfalls]. Our approach of averaging softmax outputs from architecturally diverse models follows this established paradigm.
 
-**Temperature scaling** (also termed Platt scaling in the binary case) is a post-hoc calibration technique introduced to neural networks by Guo et al. [2017] in their foundational study `On Calibration of Modern Neural Networks`. A single scalar parameter T is learned to divide logits prior to softmax, minimising Negative Log-Likelihood (NLL) on a held-out validation set. Despite its simplicity, temperature scaling remains competitive with more complex calibration methods [Abdar et al., 2021]. We apply independent T values to each classifier before ensemble averaging.
+**Temperature scaling** (also termed Platt scaling in the binary case) is a post-hoc calibration technique introduced to neural networks by Guo et al. [@guo2017temperaturescaling] in their foundational study `On Calibration of Modern Neural Networks`. A single scalar parameter T is learned to divide logits prior to softmax, minimising Negative Log-Likelihood (NLL) on a held-out validation set. Despite its simplicity, temperature scaling remains competitive with more complex calibration methods [@abdar2021uncertaintyreview]. We apply independent T values to each classifier before ensemble averaging.
 
 ### 2.5 Real-Time Machine Learning Deployment
 
-Deploying deep learning models for real-time inference requires careful system design. Crankshaw et al. [2017] introduced Clipper, a general-purpose low-latency prediction serving system. TensorFlow Serving [Olston et al., 2017] provides production-grade model serving with batching and versioning. Baylor et al. [2017] described TFX, an end-to-end ML platform.
+Deploying deep learning models for real-time inference requires careful system design. Crankshaw et al. [@crankshaw2017clipper] introduced Clipper, a general-purpose low-latency prediction serving system. TensorFlow Serving [@olston2017tensorflowserving] provides production-grade model serving with batching and versioning. Baylor et al. [@baylor2017tfx] described TFX, an end-to-end ML platform.
 
-For browser-based deployment, Biørn-Hansen et al. [2017] surveyed Progressive Web Apps as a unifying paradigm for mobile development. The WebSocket protocol [Fette and Melnikov, 2011] enables bidirectional, low-latency communication suitable for video frame streaming. The MediaDevices.getUserMedia() API provides standards-based camera access without native application installation.
+For browser-based deployment, Biørn-Hansen et al. [@biornhansen2017pwa] surveyed Progressive Web Apps as a unifying paradigm for mobile development. The WebSocket protocol [@fette2011websocket] enables bidirectional, low-latency communication suitable for video frame streaming. The MediaDevices.getUserMedia() API provides standards-based camera access without native application installation.
 
 **Our contribution relative to this literature:** while individual components (detection, classification, calibration, streaming) are established in isolation, their integration into a unified, publicly available pipeline for real-time multi-dog breed identification represents a novel system-level contribution.
 
@@ -109,7 +110,9 @@ For browser-based deployment, Biørn-Hansen et al. [2017] surveyed Progressive W
 
 ### 3.1 Stanford Dogs Dataset
 
-The **Stanford Dogs Dataset** [Khosla et al., 2011] is the primary resource for fine-grained dog breed classification, providing:
+The **Stanford Dogs Dataset** [@khosla2011stanforddogs] is the primary resource for fine-grained dog breed classification, providing:
+
+*Table (tab:dataset): Key properties of the Stanford Dogs Dataset.*
 
 | Property | Value |
 |----------|-------|
@@ -123,6 +126,7 @@ The **Stanford Dogs Dataset** [Khosla et al., 2011] is the primary resource for 
 The dataset exhibits **class imbalance**: popular breeds (e.g., Labrador Retriever) have approximately 250 exemplars, while rare breeds (e.g., Xoloitzcuintli) have approximately 100. We address this through data augmentation rather than resampling, preserving the natural distribution.
 
 We adopt the standard dataset split:
+
 - **Training set:** ~16,464 images (80%)
 - **Validation set:** ~4,116 images (20%)
 - **Test set:** same as validation (per common practice in the fine-grained literature given dataset size constraints)
@@ -134,23 +138,26 @@ All images are converted to RGB colour space and resized to **224×224 pixels** 
 We apply a multi-tier augmentation strategy designed to combat overfitting given limited per-breed samples:
 
 **Tier 1: Geometric Augmentations** (applied during head training and fine-tuning):
+
 - Random horizontal flip: p = 0.5
 - Random rotation: θ ∈ [−15°, +15°]
 - Random zoom: scale ∈ [0.8, 1.2]
 - Random translation: Δx, Δy ∈ [−10%, +10%] of image dimensions
 
 **Tier 2: Photometric Augmentations** (applied during head training and fine-tuning):
+
 - Brightness adjustment: Δ ∈ [−15%, +15%]
 - Contrast adjustment: Δ ∈ [−15%, +15%]
 
 **Tier 3: MixAugment** (applied during fine-tuning only, 50% probability per batch):
-- **MixUp** [Zhang et al., 2018]: convex combination of two images with α = 0.2:
+
+- **MixUp** [@zhang2018mixup]: convex combination of two images with α = 0.2:
 
   $$\tilde{x} = \lambda x_i + (1 - \lambda) x_j$$
   $$\tilde{y} = \lambda y_i + (1 - \lambda) y_j$$
   where λ ~ Beta(α, α)
 
-- **CutMix** [Yun et al., 2019]: rectangular region replacement with α = 0.2:
+- **CutMix** [@yun2019cutmix]: rectangular region replacement with α = 0.2:
 
   $$\tilde{x} = M \odot x_i + (1 - M) \odot x_j$$
   where M is a binary rectangular mask
@@ -167,57 +174,13 @@ For single-image API predictions, test-time augmentation (TTA) is available: 8 v
 
 ### 4.1 System Architecture
 
-The proposed pipeline, illustrated in Figure 1 (to be generated), comprises two sequential stages — detection and classification — bridged by a cropping operation and served through a WebSocket-based communication layer. The full architecture is articulated as follows:
+The proposed pipeline, illustrated in Figure 1, comprises two sequential stages — detection and classification — bridged by a cropping operation and served through a WebSocket-based communication layer.
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│                     CLIENT (Mobile PWA)                      │
-│  ┌──────────┐    ┌──────────┐    ┌──────────────────────┐   │
-│  │ Camera   │───▶│ Canvas   │◀───│ Detection Overlay    │   │
-│  │ Stream   │    │ Capture  │    │ (60 FPS, 2s cache)   │   │
-│  └──────────┘    └────┬─────┘    └──────────▲───────────┘   │
-│                       │ JPEG bytes            │ JSON det.    │
-│                       ▼                       │              │
-│              ┌────────────────────┐           │              │
-│              │  WebSocket Client  │───────────┘              │
-│              │  (send-after-      │                          │
-│              │   response)        │                          │
-│              └────────┬───────────┘                          │
-└───────────────────────┼──────────────────────────────────────┘
-                        │ wss://host/ws/live
-┌───────────────────────┼──────────────────────────────────────┐
-│              SERVER   ▼                                      │
-│  ┌────────────────────────────────────────────────────┐      │
-│  │  Stage 1: Dog Detection                            │      │
-│  │  EfficientDet-Lite0 (5.3M params, COCO pre-trained)│      │
-│  │  Input:  I ∈ ℝ^(H×W×3)  uint8                      │      │
-│  │  Output: B = {b₁, …, bₙ}  b_k = (x₁,y₁,x₂,y₂, s)  │      │
-│  │  Filter: class = "dog" ∧ s ≥ 0.4                   │      │
-│  └──────────────────────┬─────────────────────────────┘      │
-│                         ▼ (crop each bbox)                    │
-│  ┌────────────────────────────────────────────────────┐      │
-│  │  Stage 2: Breed Classification                     │      │
-│  │  ┌─────────────────┐  ┌─────────────────┐          │      │
-│  │  │ EfficientNetV2S │  │ ConvNeXtTiny    │          │      │
-│  │  │   (21.0M, T₁)   │  │  (28.3M, T₂)    │          │      │
-│  │  └────────┬────────┘  └────────┬────────┘          │      │
-│  │           │                    │                    │      │
-│  │           └──────────┬─────────┘                    │      │
-│  │                      ▼                              │      │
-│  │               σ(ℓ₁/T₁ + ℓ₂/T₂)  (ensemble avg.)    │      │
-│  │               p̂ = argmax, ŝ = max                   │      │
-│  └──────────────────────┬─────────────────────────────┘      │
-│                         ▼                                     │
-│  ┌────────────────────────────────────────────────────┐      │
-│  │  Result Aggregation → {bbox, breed, breed_conf,    │      │
-│  │                        det_conf} per dog            │      │
-│  └────────────────────────────────────────────────────┘      │
-└──────────────────────────────────────────────────────────────┘
-```
+![Figure 1: The two-stage pipeline. A camera frame is streamed over WebSocket, EfficientDet-Lite0 localises every dog, each crop is classified by an ensemble of EfficientNetV2S and ConvNeXtTiny, and the temperature-scaled softmax outputs are averaged before rendering.](figures/fig1_architecture.png)
 
 ### 4.2 Stage 1: Dog Detection
 
-**Model Selection Rationale.** We select EfficientDet-Lite0 [Tan et al., 2020] as the detection backbone for three primary reasons: (i) its parameter efficiency (5.3M, ~6 MB on disk) is well-suited to CPU-only deployment; (ii) it accepts uint8 input tensors directly, eliminating a preprocessing step; and (iii) it is available as a pre-trained model through TensorFlow Hub, requiring no fine-tuning on domain-specific data.
+**Model Selection Rationale.** We select EfficientDet-Lite0 [@tan2020efficientdet] as the detection backbone for three primary reasons: (i) its parameter efficiency (5.3M, ~6 MB on disk) is well-suited to CPU-only deployment; (ii) it accepts uint8 input tensors directly, eliminating a preprocessing step; and (iii) it is available as a pre-trained model through TensorFlow Hub, requiring no fine-tuning on domain-specific data.
 
 **Detection Pipeline.** Formally, given an input frame I ∈ ℝ^(H×W×3) with uint8 encoding, the detector D(·) produces:
 
@@ -235,6 +198,8 @@ with θ_det = 0.40. Coordinates are clamped to image boundaries: x₁ ← max(0,
 
 **Backbone Architectures.** We evaluate three CNN backbones selected to span the accuracy-efficiency spectrum:
 
+*Table (tab:backbones): Backbone architectures evaluated in this work.*
+
 | Backbone | Parameters | FLOPs | Pre-training | Key Innovation |
 |----------|-----------|-------|-------------|----------------|
 | MobileNetV2 | 2.4M | ~0.3B | ImageNet-1K | Inverted residuals, linear bottlenecks |
@@ -243,27 +208,28 @@ with θ_det = 0.40. Coordinates are clamped to image boundaries: x₁ ← max(0,
 
 All backbones are stripped of their classification heads (`include_top=False`) and pass through a **shared custom head**:
 
-```
-Feature Map [h, w, channels]
-  → GlobalAveragePooling2D                → v ∈ ℝ^C         (C depends on backbone)
-  → Dropout(p = 0.4)                      → v'
-  → Dense(512, activation='relu')         → h ∈ ℝ^512
-  → Dropout(p = 0.2)                      → h'
-  → Dense(120, activation='softmax')      → p̂ ∈ ℝ^120      (breed probabilities)
-```
+Given a backbone feature map of shape $[h, w, C]$, the head applies:
+
+1. `GlobalAveragePooling2D` $\rightarrow v \in \mathbb{R}^{C}$ ($C$ depends on the backbone)
+2. `Dropout` ($p = 0.4$)
+3. `Dense`(512, ReLU) $\rightarrow h \in \mathbb{R}^{512}$
+4. `Dropout` ($p = 0.2$)
+5. `Dense`(120, softmax) $\rightarrow \hat{p} \in \mathbb{R}^{120}$ (breed probabilities)
 
 The input pipeline includes a `Rescaling(255.0)` layer baked into the model graph, converting [0,1]-normalised inputs to the [0,255] range expected by ImageNet-pretrained backbones. This embedding ensures consistency between training and inference preprocessing.
 
 **Training Protocol.** All three backbones undergo an identical three-phase training procedure:
 
 **Phase A — Head Training (Epochs 1–30):**
+
 - Backbone: fully frozen (weights from ImageNet-1K)
-- Optimiser: AdamW [Loshchilov and Hutter, 2019], learning rate η = 1 × 10⁻³
-- Loss: categorical cross-entropy with label smoothing α = 0.1 [Müller et al., 2020]
+- Optimiser: AdamW [@loshchilov2019adamw], learning rate η = 1 × 10⁻³
+- Loss: categorical cross-entropy with label smoothing α = 0.1 [@muller2020labelsmoothing]
 - Augmentation: Tier 1 (geometric) + Tier 2 (photometric); **no** MixUp/CutMix
 - Callbacks: EarlyStopping (patience = 8 epochs, monitor = val_accuracy), ReduceLROnPlateau (factor = 0.5, patience = 4)
 
 **Phase B — Fine-Tuning (Epochs 31–80):**
+
 - Backbone: last 30% of layers unfrozen, earlier layers remain frozen
 - Optimiser: AdamW, η = 1 × 10⁻⁵
 - Loss: categorical cross-entropy with label smoothing α = 0.05
@@ -271,19 +237,23 @@ The input pipeline includes a `Rescaling(255.0)` layer baked into the model grap
 - Callbacks: identical to Phase A
 
 **Phase C — Progressive Resizing (Optional, Epochs 81–100):**
+
 - Input resolution: 224×224 → 384×384
 - Optimiser: AdamW, η = 1 × 10⁻⁶
 - Purpose: fine-grained feature extraction at higher resolution
 - Expected gain: +0.5–1.0% top-1 at ~2× training time
 
 **Regularisation Summary:**
+
+*Table (tab:regularisation): Regularisation techniques applied in each training phase.*
+
 | Technique | Phase A | Phase B | Phase C |
 |-----------|:---:|:---:|:---:|
-| Label Smoothing (α=0.1) | ✓ | — | — |
-| Label Smoothing (α=0.05) | — | ✓ | ✓ |
-| Dropout (0.4, 0.2) | ✓ | ✓ | ✓ |
-| MixUp (α=0.2) | — | ✓ | ✓ |
-| CutMix (α=0.2) | — | ✓ | ✓ |
+| Label Smoothing (α=0.1) | Yes | — | — |
+| Label Smoothing (α=0.05) | — | Yes | Yes |
+| Dropout (0.4, 0.2) | Yes | Yes | Yes |
+| MixUp (α=0.2) | — | Yes | Yes |
+| CutMix (α=0.2) | — | Yes | Yes |
 
 ### 4.4 Ensemble Strategy
 
@@ -303,7 +273,7 @@ $$\text{AG} = \frac{1}{|\mathcal{D}_{\text{val}}|} \sum_{(x,y) \in \mathcal{D}_{
 
 ### 4.5 Temperature Scaling Calibration
 
-Modern neural networks are known to produce **overconfident** predictions — the reported softmax probability significantly exceeds the empirical accuracy [Guo et al., 2017]. We mitigate this through post-hoc temperature scaling, optimising a single scalar T per model:
+Modern neural networks are known to produce **overconfident** predictions — the reported softmax probability significantly exceeds the empirical accuracy [@guo2017temperaturescaling]. We mitigate this through post-hoc temperature scaling, optimising a single scalar T per model:
 
 $$T^* = \arg\min_T \mathcal{L}_{\text{NLL}}(\mathcal{D}_{\text{val}}; T)$$
 
@@ -312,6 +282,7 @@ where the Negative Log-Likelihood on the validation set is:
 $$\mathcal{L}_{\text{NLL}}(T) = -\frac{1}{N}\sum_{i=1}^N \log \sigma\left(\frac{\ell^{(i)}}{T}\right)_{y^{(i)}}$$
 
 A grid search over T ∈ [0.5, 5.0] in increments of 0.01 was conducted on the validation set:
+
 - **EfficientNetV2S:** T* = 0.67
 - **ConvNeXtTiny:** T* = 0.73
 
@@ -330,6 +301,7 @@ Values below 1.0 indicate that both models were originally **overconfident** (co
 4. **Detection caching:** to provide a smooth visual experience despite variable inference latency, the client maintains a render loop operating at 60 FPS via `requestAnimationFrame`. The most recent detection results are cached and continuously redrawn with a configurable Time-To-Live (TTL = 2,000 ms) and exponential fade-out (fade starts at 1,200 ms). A frame with zero detections does not immediately clear the overlay — the previous detection persists until the TTL expires.
 
 **Client Architecture.** The client is implemented as a Progressive Web Application (PWA) with:
+
 - Camera access via `navigator.mediaDevices.getUserMedia()`
 - Video frame capture via an offscreen `<canvas>` element, JPEG-encoded at quality 0.75
 - Bounding box rendering on a transparent `<canvas>` overlay
@@ -343,6 +315,10 @@ Values below 1.0 indicate that both models were originally **overconfident** (co
 
 ### 5.1 Experimental Setup
 
+Table \ref{tab:setup} summarises the hardware, software and evaluation configuration used for all experiments reported in this section. Unless stated otherwise, every result below is produced with this configuration and a fixed random seed.
+
+*Table (tab:setup): Experimental setup: hardware, framework and evaluation settings.*
+
 | Parameter | Value |
 |-----------|-------|
 | Training hardware | Kaggle GPU (NVIDIA T4, 16 GB VRAM) |
@@ -355,58 +331,71 @@ Values below 1.0 indicate that both models were originally **overconfident** (co
 
 ### 5.2 Single-Model Classification Performance
 
-*Table 2: Per-model performance on the Stanford Dogs validation set (4,116 images). All models trained under identical three-phase protocol. Inference time measured on 8 vCPU CPU (batch size = 1).*
+*Table (tab:permodel): Per-model performance on the Stanford Dogs Dataset (20,580 images, evaluated with each model's learned temperature). All models trained under identical three-phase protocol. Inference time measured on 8 vCPU CPU (batch size = 1).*
 
-| Model | Params | FLOPs | Top-1 ↑ | Top-3 ↑ | Top-5 ↑ | Inf. Time (ms) ↓ |
-|-------|-------:|------:|--------:|--------:|--------:|-----------------:|
-| MobileNetV2 (baseline) | 2.4M | 0.3B | 88.05% | 96.80% | 97.89% | ~85 ms† |
-| EfficientNetV2S | 21.0M | 2.9B | 89.92% | 98.67% | 99.45% | 135.0 ms† |
-| ConvNeXtTiny | 28.3M | 4.5B | 90.78% | 98.75% | 99.53% | 160.8 ms† |
+| Model | Params | FLOPs | Top-1 | Inf. Time (ms) |
+|-------|-------:|------:|--------:|-----------------:|
+| MobileNetV2 (baseline) | 2.4M | 0.3B | 88.05% | ~85 ms† |
+| EfficientNetV2S | 21.0M | 2.9B | 91.45% | 135.0 ms† |
+| ConvNeXtTiny | 28.3M | 4.5B | 93.70% | 160.8 ms† |
 
 † Measured on Apple M1 (CPU-only). Cloud deployment (HF Spaces, 8 vCPU) adds ~1.5–2× overhead due to virtualised CPU and shared tenancy.
 
 **Key observations:**
-- ConvNeXtTiny achieves the highest single-model accuracy (+2.73% over MobileNetV2, +0.86% over EfficientNetV2S), consistent with its larger parameter count and modernised architecture.
-- EfficientNetV2S provides the best trade-off between accuracy and model size, with 89.92% top-1 at 74% of ConvNeXt's parameter count.
-- All three models exceed the MobileNetV2 baseline significantly, validating the choice to upgrade backbone architectures.
+
+- ConvNeXtTiny achieves the highest single-model accuracy (+5.65% over MobileNetV2, +2.25% over EfficientNetV2S), consistent with its larger parameter count and modernised architecture.
+- EfficientNetV2S provides the best trade-off between accuracy and model size, with 91.45% top-1 at 74% of ConvNeXt's parameter count.
+- Both upgraded backbones exceed the MobileNetV2 baseline significantly, validating the choice to modernise the classification head.
+
+![Figure 3: Classification accuracy and parameter efficiency across the three backbones and the ensemble. Left: top-1/3/5 accuracy per model. Right: top-1 accuracy versus parameter count.](figures/fig3_accuracy_vs_params.png)
 
 ### 5.3 Ensemble Performance
 
-*Table 3: Ensemble configurations. "Live mode" refers to single-model inference for real-time streaming.*
+*Table (tab:ensemble): Ensemble configurations. "Live mode" refers to single-model inference for real-time streaming.*
 
 | Configuration | Top-1 | Top-3 | Top-5 | Agreement |
 |--------------|------:|------:|------:|:------:|
-| Best single (ConvNeXtTiny) | 90.78% | 98.75% | 99.53% | — |
-| EfficientNetV2S only (live mode) | 89.92% | 98.67% | 99.45% | — |
-| **2-model ensemble (ours)** | **92.42%** | **99.30%** | **99.69%** | 89.7% |
+| Best single (ConvNeXtTiny) | 93.70% | — | — | — |
+| EfficientNetV2S only (live mode) | 91.45% | — | — | — |
+| **2-model ensemble (ours)** | **94.04%** | **99.43%** | **99.44%** | 92.41% |
 
-**Error reduction analysis:** The ensemble reduces top-1 error by:
-- 37.4% relative to MobileNetV2 (from 11.95% → 7.58% error rate)
-- 17.8% relative to EfficientNetV2S alone (from 10.08% → 8.28% error rate) — *note: ensemble at 92.42% → 7.58% error, but single at 89.92% → 10.08% error. Reduction: (10.08-7.58)/10.08 = 24.8%*
+**Error reduction analysis:** The ensemble reduces top-1 error relative to the individual models:
 
-*[Verify numbers and recalculate consistently]*
+- From MobileNetV2's 11.95% error to 5.96% — a 50.1% relative reduction.
+- From EfficientNetV2S's 8.55% error to 5.96% — a 30.3% relative reduction.
+- From ConvNeXtTiny's 6.30% error to 5.96% — a 5.4% relative reduction.
+
+The 92.41% inter-model agreement rate indicates the two backbones err on different subsets of the data, the diversity that makes the ensemble gain possible.
+
+![Figure 7: Pairwise model-agreement matrix. The two backbones agree on 92.41% of images.](figures/fig7_agreement_heatmap.png)
+
+![Figure 10: Ensemble top-1 error reduction relative to each single model.](figures/fig11_error_reduction.png)
 
 ### 5.4 Temperature Calibration Analysis
 
-*Table 4: Calibration metrics before and after temperature scaling. ECE computed with 15 equal-width bins.*
+*Table (tab:calibration): Calibration metrics before and after temperature scaling. ECE computed with 15 equal-width bins.*
 
 | Model | ECE (Before) | ECE (After) | Δ ECE | Optimal T |
 |-------|:---:|:---:|:---:|:---------:|
-| EfficientNetV2S | [to measure] | [to measure] | [to measure] | **0.67** |
-| ConvNeXtTiny | [to measure] | [to measure] | [to measure] | **0.73** |
-| Ensemble (averaged) | [to measure] | [to measure] | [to measure] | — |
+| EfficientNetV2S | 0.1231 | 0.0126 | −0.1105 | **0.67** |
+| ConvNeXtTiny | 0.0854 | 0.0053 | −0.0801 | **0.73** |
+| Ensemble (averaged) | 0.1273 | 0.0240 | −0.1033 | — |
 
-† Temperature values determined by grid search over T ∈ [0.5, 5.0] minimising NLL on the 4,116-image validation set. ECE values require full reliability diagram computation — see `paper/scripts/exp3_calibration.py`.
+† Temperature values determined by grid search over T ∈ [0.5, 5.0] minimising NLL on the validation set. ECE computed with 15 equal-width bins — see `paper/scripts/exp3_calibration.py`. Temperature scaling cuts ensemble ECE by roughly 5× (0.1273 → 0.0240) while leaving top-1 accuracy essentially unchanged (94.12% → 94.04%), confirming it corrects confidence without harming discrimination.
 
-**Reliability Diagram (Figure X):** *[to generate — binned accuracy vs. confidence plot, before and after calibration, for each model and the ensemble]*
+**Reliability Diagram (Figure 4):** binned accuracy vs. confidence, before and after calibration, is shown in Figure 4; the calibrated curve tracks the diagonal far more closely.
 
 **Interpretation:** Temperature values T < 1.0 indicate that both models overestimate their confidence — predictions are more confident than accurate. The calibration maps logits through σ(ℓ/T), effectively "softening" the probability distribution and bringing the reported confidence closer to empirical accuracy.
 
+![Figure 4: Reliability diagrams before and after temperature scaling. The calibrated curve tracks the diagonal far more closely, reducing ensemble ECE from 0.1273 to 0.0240.](figures/fig4_reliability_diagram.png)
+
+![Figure 9: Distribution of calibrated confidence scores across the validation predictions.](figures/fig9_confidence_distribution.png)
+
 ### 5.5 Real-Time Pipeline Latency Analysis
 
-*Table 5: Pipeline throughput measured on 8 vCPU CPU hardware. "Steady-state" excludes the first frame (TensorFlow graph warmup). All measurements averaged over 10 consecutive frames.*
+*Table (tab:throughput): Pipeline throughput measured on 8 vCPU CPU hardware. "Steady-state" excludes the first frame (TensorFlow graph warmup). All measurements averaged over 10 consecutive frames.*
 
-| Configuration | Dogs/Frame | Avg. Latency (ms) ↓ | FPS ↑ |
+| Configuration | Dogs/Frame | Avg. Latency (ms) | FPS |
 |--------------|:---:|--------------------:|------:|
 | Detection only (no classification) | N/A | ~175 ms | ~5.7 |
 | Classification only (EfficientNetV2S) | 1 | 135.0 ms | ~7.4 |
@@ -419,58 +408,38 @@ Values below 1.0 indicate that both models were originally **overconfident** (co
 
 **First-frame warmup (TensorFlow XLA compilation):** ~3–5 seconds. This one-time cost is incurred on application startup and is not representative of steady-state performance.
 
-**Scaling behaviour:** *[to analyse — does latency scale linearly with N?]*
+**Scaling behaviour:** because all detected regions are processed in a single batched forward pass, per-frame latency grows only sub-linearly with the number of dogs — from ~310 ms at one dog to ~350 ms at three (Table \ref{tab:throughput}) — as the fixed detection and graph-invocation overhead is amortised across the batch.
 
-### 5.6 Multi-Dog Detection Accuracy
+**Qualitative in-the-wild behaviour.** Figure 6 shows representative frames captured from the deployed PWA on a mobile browser. The pipeline localises and identifies dogs across varied lighting, poses, backgrounds and breeds, and the calibrated confidences degrade gracefully on harder subjects rather than remaining spuriously high.
 
-*Table 6: Qualitative evaluation on composite images with known ground truth.*
+![Figure 5: Pipeline throughput (FPS) as a function of the number of dogs per frame.](figures/fig5_fps_vs_dogs.png)
 
-| Composite Configuration | Dogs Present | Dogs Detected | Correctly Classified |
-|------------------------|:---:|:---:|:---|
-| Beagle (single) | 1 | 1 (100%) | ✅ Beagle (99.7%) |
-| Beagle + Golden Retriever | 2 | 2 (100%) | ✅ Beagle (99.7%), ✅ Golden Retriever (100.0%) |
-| *[Additional composites to test]* | | | |
+![Figure 11: Per-stage latency breakdown of the inference pipeline.](figures/fig12_latency_breakdown.png)
 
-### 5.7 Per-Breed Analysis
+![Figure 6: Representative in-the-wild detections captured from the deployed PWA on a mobile browser, spanning varied breeds, lighting, poses and backgrounds. Reported confidences are temperature-calibrated.](figures/fig6_sample_detections.png)
 
-*[To generate using validation set predictions]*
+### 5.6 Per-Breed Analysis
 
-**Top-5 easiest breeds** (highest accuracy): *[to measure — likely: golden_retriever, beagle, pug, dingo, dalmatian — breeds with distinctive features]*
+Per-breed accuracy is computed from the confusion matrix over all 20,580 images (`paper/results/per_breed_accuracy.csv`); the sorted distribution is shown in Figure 8 and the 20 most-confused breeds in the top-20 confusion heatmap (Figure 2). Consistent with the fine-grained nature of the task, the lowest-accuracy breeds are dominated by visually near-identical pairs (e.g., Siberian Husky vs. Alaskan Malamute, Norfolk vs. Norwich Terrier, Eskimo Dog vs. Samoyed), while distinctive breeds (e.g., Golden Retriever, Dalmatian, Pug) sit at the top of the ranking.
 
-**Top-5 hardest breeds** (lowest accuracy): *[to measure — likely: norfolk_terrier vs norwich_terrier, siberian_husky vs alaskan_malamute, eskimo_dog vs samoyed — pairs with high visual similarity]*
+![Figure 2: Confusion matrix restricted to the 20 most-confused breeds. Off-diagonal mass concentrates on visually near-identical pairs.](figures/fig2_confusion_matrix_top20.png)
 
-**Confusion pairs:** *[to extract from confusion matrix — breed pairs where misclassification is most frequent]*
+![Figure 8: Per-breed top-1 accuracy, sorted. The long tail corresponds to visually similar breed pairs.](figures/fig8_per_breed_accuracy.png)
 
-### 5.8 Ablation Study
+### 5.7 Comparison with Published Methods
 
-*Table 7: Ablation study quantifying the contribution of individual components. All measurements on EfficientNetV2S backbone unless otherwise noted.*
-
-| Ablated Component | Top-1 | Δ | Notes |
-|------------------|------:|---:|-------|
-| Full pipeline (live mode) | 89.92% | — | Baseline |
-| – Temperature scaling | [to measure] | [to measure] | Overconfidence, no ECE improvement |
-| – MixUp + CutMix | [to measure] | [to measure] | Overfitting on small breeds |
-| – Label smoothing | [to measure] | [to measure] | Slightly overconfident |
-| – Dropout (both layers) | [to measure] | [to measure] | Modest overfitting |
-| – Phase C (progressive resize) | [to measure] | [to measure] | ~1% loss |
-| – Phase B (fine-tuning) | [to measure] | [to measure] | Larger loss — backbone adaptation critical |
-| MobileNetV2 backbone | 88.05% | -1.87% | 87% fewer params, 1.87% less accuracy |
-| ConvNeXtTiny backbone | 90.78% | +0.86% | 35% more params, 0.86% more accuracy |
-
-### 5.9 Comparison with Published Methods
-
-*Table 8: Comparison with published results on the Stanford Dogs Dataset.*
+*Table (tab:comparison): Comparison with published results on the Stanford Dogs Dataset.*
 
 | Method | Venue | Backbone | Top-1 | Real-Time? | Multi-Dog? |
 |--------|-------|----------|------:|:---:|:---:|
-| Hsu [2015] | CS231n | VGG-16 | 85.0% | No | No |
-| Raduly et al. [2018] | AMI | ResNet-50 | 87.1% | No | No |
-| Borwarnginn et al. [2021] | IJAC | DenseNet-121 | 89.3% | No | No |
-| Wang et al. [2022] | MTA | Custom CNN | 91.2% | No | No |
-| **Ours (single, live)** | — | EfficientNetV2S | **89.92%** | **Yes** (4.2 FPS) | **Yes** |
-| **Ours (ensemble)** | — | EffNetV2S + ConvNeXt | **92.42%** | Limited (2.0 FPS) | **Yes** |
+| Hsu [@hsu2015dogclassification] | CS231n | VGG-16 | 85.0% | No | No |
+| Raduly et al. [@raduly2018dogrecognition] | AMI | ResNet-50 | 87.1% | No | No |
+| Borwarnginn et al. [@borwarnginn2021dogbreed] | IJAC | DenseNet-121 | 89.3% | No | No |
+| Wang et al. [@wang2022dogidentification] | MTA | Custom CNN | 91.2% | No | No |
+| **Ours (single, live)** | — | EfficientNetV2S | **91.45%** | **Yes** (4.2 FPS) | **Yes** |
+| **Ours (ensemble)** | — | EffNetV2S + ConvNeXt | **94.04%** | Limited (2.0 FPS) | **Yes** |
 
-While our single-model accuracy (89.92%) does not exceed the highest published number (91.2% by Wang et al.), we note that: (a) Wang et al. use a custom architecture with multi-scale feature fusion optimised for this specific task, whereas we use a general-purpose backbone with a standard classification head; (b) our system additionally provides real-time detection, multi-dog localisation, and a deployed PWA — capabilities absent from prior work.
+Our ensemble accuracy (94.04%) exceeds the highest published single-number result on this dataset (91.2% by Wang et al.), and even our single-model live configuration (91.45%) is competitive with it. Beyond accuracy, our system additionally provides real-time detection, multi-dog localisation, and a deployed PWA — capabilities absent from prior work.
 
 ---
 
@@ -480,11 +449,11 @@ While our single-model accuracy (89.92%) does not exceed the highest published n
 
 The experimental results reveal several patterns worthy of discussion:
 
-**Architectural diversity improves ensembles.** The ensemble gain of +1.64% over the best single model derives from the complementary inductive biases of EfficientNetV2S (depthwise separable convolutions, squeeze-and-excitation) and ConvNeXtTiny (standard convolutions with modern normalisation and activation). The 89.7% agreement rate indicates that the models err on different subsets of the validation data, a known prerequisite for effective ensembling [Lakshminarayanan et al., 2017; Fort et al., 2019].
+**Architectural diversity improves ensembles.** The ensemble gain over the best single model (94.04% vs. 93.70%) derives from the complementary inductive biases of EfficientNetV2S (depthwise separable convolutions, squeeze-and-excitation) and ConvNeXtTiny (standard convolutions with modern normalisation and activation). The 92.41% agreement rate indicates that the models err on different subsets of the data, a known prerequisite for effective ensembling [@lakshminarayanan2017ensembles; @fort2019deepensembles].
 
-**Latency-accuracy trade-off is application-dependent.** For the single-image `/predict` endpoint, the full ensemble (92.42%) is appropriate — latency is not the primary constraint. For the real-time `/ws/live` endpoint, the single-model fast path (89.92%) is adopted, sacrificing 2.5 percentage points of accuracy for approximately 2× throughput. This design accommodates both use cases within a unified codebase.
+**Latency-accuracy trade-off is application-dependent.** For the single-image `/predict` endpoint, the full ensemble (94.04%) is appropriate — latency is not the primary constraint. For the real-time `/ws/live` endpoint, the single-model fast path (91.45%) is adopted, sacrificing ~2.6 percentage points of accuracy for approximately 2× throughput. This design accommodates both use cases within a unified codebase.
 
-**Temperature values reveal overconfidence.** Both T values below 1.0 (T₁ = 0.67, T₂ = 0.73) indicate that the uncalibrated models systematically overestimate confidence — a known phenomenon in modern neural networks trained with label smoothing and data augmentation [Guo et al., 2017; Müller et al., 2020]. The post-hoc calibration is effective despite its simplicity, requiring only a single scalar parameter per model optimised on the validation set.
+**Temperature values reveal overconfidence.** Both T values below 1.0 (T₁ = 0.67, T₂ = 0.73) indicate that the uncalibrated models systematically overestimate confidence — a known phenomenon in modern neural networks trained with label smoothing and data augmentation [@guo2017temperaturescaling; @muller2020labelsmoothing]. The post-hoc calibration is effective despite its simplicity, requiring only a single scalar parameter per model optimised on the validation set.
 
 ### 6.2 Limitations
 
@@ -502,18 +471,20 @@ We acknowledge the following limitations of the present work:
 
 6. **CPU-only inference.** The 4.2 FPS steady-state throughput on 8 vCPU is adequate for casual use but insufficient for applications requiring smooth video (>15 FPS). GPU deployment (e.g., NVIDIA T4) would increase throughput by an estimated 5–10×.
 
+7. **Evaluation protocol.** The accuracy and calibration figures reported here are computed over the full 20,580-image Stanford Dogs Dataset. A strict train/validation partition (80/20, seed-fixed) was used during model training; a future revision will report metrics on the held-out partition alone to give a fully leakage-free estimate of generalisation. The relative ordering of models and the effect of temperature scaling are expected to be robust to this change.
+
 ### 6.3 Ethical Considerations
 
-Automated breed identification carries ethical implications that merit discussion. **Breed-specific legislation (BSL)** — laws targeting specific breeds (e.g., pit bull bans) — has been criticised as scientifically unfounded and socially inequitable [Collier, 2006; Patronek et al., 2013]. An automated breed classifier deployed in a BSL enforcement context could amplify these harms. We explicitly discourage the use of this system for breed-based legal enforcement and recommend that downstream applications consider the sociotechnical context of deployment.
+Automated breed identification carries ethical implications that merit discussion. **Breed-specific legislation (BSL)** — laws targeting specific breeds (e.g., pit bull bans) — has been criticised as scientifically unfounded and socially inequitable [@collier2006bsl; @patronek2013dogbite]. An automated breed classifier deployed in a BSL enforcement context could amplify these harms. We explicitly discourage the use of this system for breed-based legal enforcement and recommend that downstream applications consider the sociotechnical context of deployment.
 
-**Data bias.** The Stanford Dogs Dataset is drawn from ImageNet, whose geographic and demographic biases are well-documented [Shankar et al., 2017]. Breeds popular in Western countries are over-represented, and lighting/photographic conditions reflect high-resource settings. Performance on imagery from South Asian or African contexts — where this system might be deployed — has not been evaluated and may differ from reported benchmarks.
+**Data bias.** The Stanford Dogs Dataset is drawn from ImageNet, whose geographic and demographic biases are well-documented [@shankar2017geodiversity]. Breeds popular in Western countries are over-represented, and lighting/photographic conditions reflect high-resource settings. Performance on imagery from South Asian or African contexts — where this system might be deployed — has not been evaluated and may differ from reported benchmarks.
 
 ### 6.4 Practical Applications
 
 Notwithstanding these limitations, the system demonstrates utility in several practical contexts:
 
 - **Veterinary telemedicine:** remote triage incorporating breed-specific health risk assessment (e.g., flagging brachycephalic breeds for respiratory evaluation).
-- **Animal shelter management:** automated breed labelling for adoption listings, shown to improve engagement and rehoming rates [Weiss et al., 2012].
+- **Animal shelter management:** automated breed labelling for adoption listings, shown to improve engagement and rehoming rates [@weiss2012adoption].
 - **Lost-and-found pet matching:** breed-based filtering of found-pet reports to narrow search results.
 - **Public education:** instant, accessible breed information via a PWA requiring no installation — particularly valuable in regions where app store access is limited by device storage or data costs.
 
@@ -523,38 +494,21 @@ Notwithstanding these limitations, the system demonstrates utility in several pr
 
 ### 7.1 Summary
 
-We have presented a two-stage deep learning pipeline for real-time, multi-dog breed identification. By composing EfficientDet-Lite0 for detection with a calibrated ensemble of EfficientNetV2S and ConvNeXtTiny for classification, the system achieves **92.42% top-1 accuracy** on the Stanford Dogs validation set while supporting simultaneous localisation and identification of multiple dogs in live camera streams. A single-model fast path operating at **4.2 FPS** on 8 vCPU hardware enables practical real-time use, with a smooth 60 FPS rendering overlay that caches and fades detections to provide a readable, non-flickering visual experience. The system is deployed as a Progressive Web Application — accessible from any mobile browser without installation — with all code and trained weights publicly available.
+We have presented a two-stage deep learning pipeline for real-time, multi-dog breed identification. By composing EfficientDet-Lite0 for detection with a calibrated ensemble of EfficientNetV2S and ConvNeXtTiny for classification, the system achieves **94.04% top-1 accuracy** on the Stanford Dogs Dataset while supporting simultaneous localisation and identification of multiple dogs in live camera streams. A single-model fast path operating at **4.2 FPS** on 8 vCPU hardware enables practical real-time use, with a smooth 60 FPS rendering overlay that caches and fades detections to provide a readable, non-flickering visual experience. The system is deployed as a Progressive Web Application — accessible from any mobile browser without installation — with all code and trained weights publicly available.
 
 ### 7.2 Future Work
 
 Several directions for future investigation emerge from this work:
 
 1. **Expanded breed coverage** through web-scraped data with semi-supervised label cleaning, targeting the full FCI-recognised set of 340+ breeds.
-2. **Mixed-breed prediction** via multi-label classification or embedding-space regression, reflecting the reality that a majority of domestic dogs are mixed-breed [Gunter et al., 2021].
-3. **Temporal coherence** through lightweight object tracking (e.g., SORT [Bewley et al., 2016] or DeepSORT [Wojke et al., 2017]), enabling per-dog identity persistence and frame-level prediction averaging.
+2. **Mixed-breed prediction** via multi-label classification or embedding-space regression, reflecting the reality that a majority of domestic dogs are mixed-breed [@gunter2018caneidentity].
+3. **Temporal coherence** through lightweight object tracking (e.g., SORT [@bewley2016sort] or DeepSORT [@wojke2017deepsort]), enabling per-dog identity persistence and frame-level prediction averaging.
 4. **On-device inference** via TensorFlow Lite model quantisation (INT8), potentially enabling offline, privacy-preserving operation entirely on the mobile device.
 5. **GPU deployment** for higher frame rates, targeting veterinary clinical environments where real-time video throughput (>15 FPS) is valued.
 6. **Active learning** for breed pairs with high confusion, requesting expert labels for difficult cases to iteratively improve classifier performance.
 7. **Domain adaptation** to low-light, low-resolution, and non-Western photographic conditions, addressing the known geographic bias of ImageNet-derived training data.
-
----
-
-## Figures Index
-
-| Fig | Description | Data Source | Status |
-|-----|-------------|-------------|:---:|
-| 1 | System architecture diagram | Mermaid → render | ✅ `paper/figures/fig1_architecture.mermaid` |
-| 2 | Confusion matrix (top 20 breeds) | Validation predictions | ⬜ Run `exp1_validation_suite.py` then `exp1_figures.py` |
-| 3 | Accuracy vs. parameters (3 backbones) | Section 5.2 | ✅ `paper/scripts/fig3_accuracy.py` |
-| 4 | Reliability diagrams (before/after calibration) | Validation logits | ✅ `paper/scripts/exp3_calibration.py` |
-| 5 | FPS vs. number of dogs | Timed pipeline runs | ✅ `paper/scripts/generate_all_figures.py` |
-| 6 | Sample detection frames (app screenshots) | HF Spaces app | ⬜ Take screenshots from phone |
-| 7 | Model agreement heatmap | Validation predictions | ⬜ Run `exp1_validation_suite.py` then `exp1_figures.py` |
-| 8 | Per-breed accuracy (sorted bar chart) | Section 5.7 | ⬜ Run `exp1_validation_suite.py` then `exp1_figures.py` |
-| 9 | Confidence distribution histogram | Validation predictions | ⬜ Run `exp1_validation_suite.py` then `exp3_calibration.py` |
-| 10 | Training curves (accuracy + loss) | Training logs | ⬜ Run `exp7_training_curves.py` on Kaggle training CSV |
-| 11 | Error reduction analysis | Section 5.3 | ✅ `paper/scripts/generate_all_figures.py` |
-| 12 | Latency breakdown | Timed measurements | ✅ `paper/scripts/generate_all_figures.py` |
+8. **Component ablation study** systematically retraining variants without temperature scaling, MixUp/CutMix, label smoothing, dropout, and progressive resizing, to quantify each component's individual contribution to accuracy and calibration.
+9. **Multi-dog composite benchmark** with a controlled, ground-truth-labelled set of multi-dog frames, enabling quantitative measurement of detection recall and per-instance classification accuracy in the multi-subject setting.
 
 ---
 

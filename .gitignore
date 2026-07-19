@@ -72,3 +72,9 @@ paper/results/*
 !paper/results/.gitkeep
 paper/figures/*.png
 
+
+# IEEE / arXiv build outputs (regenerate: paper/scripts/build_ieee.py then make_arxiv_package.py)
+paper/ieee/
+paper/arxiv/
+paper/arxiv_submission.tar.gz
+paper/*.pdf
