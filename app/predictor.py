@@ -235,14 +235,11 @@ class DogBreedPredictor:
             img_size = int(model.input_shape[1] or 224)
             if use_tta:
                 batch = preprocess_image_tta(image_bytes, img_size=img_size)
-                # Direct __call__ instead of model.predict(): for single/small
-                # batches it avoids ~10-30x per-call framework overhead that
-                # otherwise starves the GPU during large validation sweeps.
-                preds = np.asarray(model(batch, training=False))
+                preds = model.predict(batch, verbose=0)
                 preds = np.mean(preds, axis=0)
             else:
                 image = preprocess_image(image_bytes, img_size=img_size)
-                preds = np.asarray(model(image, training=False))[0]
+                preds = model.predict(image, verbose=0)[0]
             if return_raw:
                 all_raw_predictions.append(preds.copy())
             preds = self._apply_temperature(preds, temperature)
